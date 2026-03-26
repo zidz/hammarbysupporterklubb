@@ -1,0 +1,180 @@
+{% extends "base.html" %}
+
+{% block title %}Hem - Hammarby Supporterklubb{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="hero">
+    <div class="container">
+        <h1>Välkommen till Hammarby Supporterklubb</h1>
+        <p>Första och främsta! Gå med i Sveriges största supporterklubb.</p>
+        <div class="hero-buttons">
+            <a href="#membership" class="btn btn-primary">Bli Medlem</a>
+            <a href="#events" class="btn btn-secondary">Se Event</a>
+        </div>
+    </div>
+</section>
+
+<!-- About Section -->
+<section id="about" class="section">
+    <div class="container">
+        <h2 class="section-title">Om Oss</h2>
+        <div class="card-grid">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">🟢 Vår Historia</h3>
+                </div>
+                <div class="card-body">
+                    <p class="card-text">
+                        Hammarby Supporterklubb har varit trogna supportrar sedan 1980-talet. 
+                        Vi är stolta över vår gröna-vita tradition och vår passion för fotboll.
+                    </p>
+                </div>
+            </div>
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">⚽ Vårt Syfte</h3>
+                </div>
+                <div class="card-body">
+                    <p class="card-text">
+                        Att samla Hammarby-supportrar över hela Sverige, organisera resor till matcher, 
+                        och skapa en stark gemenskap för alla som älskar Bajen.
+                    </p>
+                </div>
+            </div>
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">🎉 Våra Event</h3>
+                </div>
+                <div class="card-body">
+                    <p class="card-text">
+                        Vi arrangerar matchresor, supporterkvällar, och sociala event hela säsongen. 
+                        Gå med i hundratals andra supportrar!
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Events Section -->
+<section id="events" class="section" style="background-color: var(--light-gray);">
+    <div class="container">
+        <h2 class="section-title">Kommande Event</h2>
+        <div class="card-grid">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">Säsongsupptakt 2026</h3>
+                </div>
+                <div class="card-body">
+                    <p class="card-text"><strong>Datum:</strong> 15 Mars 2026</p>
+                    <p class="card-text"><strong>Plats:</strong> Södermalms IP</p>
+                    <p class="card-text">Välkomna den nya säsongen med andra supportrar!</p>
+                </div>
+            </div>
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">Derby Resa - AIK</h3>
+                </div>
+                <div class="card-body">
+                    <p class="card-text"><strong>Datum:</strong> 20 April 2026</p>
+                    <p class="card-text"><strong>Plats:</strong> Friends Arena</p>
+                    <p class="card-text">Gemensam resa och matchupplevelse!</p>
+                </div>
+            </div>
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">Supporterkväll</h3>
+                </div>
+                <div class="card-body">
+                    <p class="card-text"><strong>Datum:</strong> Varje torsdag</p>
+                    <p class="card-text"><strong>Plats:</strong> Hammarby Pub</p>
+                    <p class="card-text">Diskutera matcher och träffa andra supportrar!</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Membership Section -->
+<section id="membership" class="section">
+    <div class="container">
+        <h2 class="section-title">Bli Medlem</h2>
+        <div class="card-grid">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">Student</h3>
+                </div>
+                <div class="card-body">
+                    <p class="card-text" style="font-size: 2rem; font-weight: bold; color: var(--hammarby-green);">299 kr/år</p>
+                    <ul style="list-style: none; padding: 0;">
+                        <li>✅ Tillgång till alla event</li>
+                        <li>✅ Rabatt på matchresor</li>
+                        <li>✅ Medlemsblad</li>
+                    </ul>
+                    <a href="#" class="btn btn-primary mt-2">Gå Med</a>
+                </div>
+            </div>
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">Standard</h3>
+                </div>
+                <div class="card-body">
+                    <p class="card-text" style="font-size: 2rem; font-weight: bold; color: var(--hammarby-green);">399 kr/år</p>
+                    <ul style="list-style: none; padding: 0;">
+                        <li>✅ Tillgång till alla event</li>
+                        <li>✅ Rabatt på matchresor</li>
+                        <li>✅ Medlemsblad</li>
+                        <li>✅ Prioriterad bokning</li>
+                    </ul>
+                    <a href="#" class="btn btn-primary mt-2">Gå Med</a>
+                </div>
+            </div>
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">Premium</h3>
+                </div>
+                <div class="card-body">
+                    <p class="card-text" style="font-size: 2rem; font-weight: bold; color: var(--hammarby-green);">599 kr/år</p>
+                    <ul style="list-style: none; padding: 0;">
+                        <li>✅ Alla Standard-fördelar</li>
+                        <li>✅ VIP-platser på event</li>
+                        <li>✅ Exklusiv merchandise</li>
+                        <li>✅ Möte med spelare</li>
+                    </ul>
+                    <a href="#" class="btn btn-primary mt-2">Gå Med</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Contact Section -->
+<section id="contact" class="section" style="background-color: var(--light-gray);">
+    <div class="container">
+        <h2 class="section-title">Kontakta Oss</h2>
+        <div class="card" style="max-width: 600px; margin: 0 auto;">
+            <div class="card-body">
+                <form data-validate>
+                    <div style="margin-bottom: 1rem;">
+                        <label for="name" style="display: block; margin-bottom: 0.5rem; font-weight: 500;">Namn</label>
+                        <input type="text" id="name" name="name" required 
+                               style="width: 100%; padding: 0.75rem; border: 1px solid var(--border-color); border-radius: 4px;">
+                    </div>
+                    <div style="margin-bottom: 1rem;">
+                        <label for="email" style="display: block; margin-bottom: 0.5rem; font-weight: 500;">Email</label>
+                        <input type="email" id="email" name="email" required 
+                               style="width: 100%; padding: 0.75rem; border: 1px solid var(--border-color); border-radius: 4px;">
+                    </div>
+                    <div style="margin-bottom: 1rem;">
+                        <label for="message" style="display: block; margin-bottom: 0.5rem; font-weight: 500;">Meddelande</label>
+                        <textarea id="message" name="message" rows="5" required 
+                                  style="width: 100%; padding: 0.75rem; border: 1px solid var(--border-color); border-radius: 4px;"></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary" style="width: 100%;">Skicka Meddelande</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
