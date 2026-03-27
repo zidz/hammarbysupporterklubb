@@ -3,88 +3,66 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>{% block title %}Hammarby Supporterklubb{% endblock %}</title>
-    
-    <!-- Favicon -->
-    <link rel="icon" type="image/png" href="{{ url_for('static', filename='images/favicon.png') }}">
-    
-    <!-- Stylesheets -->
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
-    
-    <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
     {% block extra_css %}{% endblock %}
 </head>
 <body>
-    <!-- Header/Navigation -->
-    <header class="main-header">
-        <nav class="navbar">
-            <div class="container">
-                <div class="nav-brand">
-                    <a href="{{ url_for('index') }}" class="brand-logo">
-                        <img src="{{ url_for('static', filename='images/logo.png') }}" alt="Hammarby Logo" class="logo">
-                        <span class="brand-text">Hammarby Supporterklubb</span>
-                    </a>
-                </div>
-                
-                <button class="mobile-menu-toggle" aria-label="Meny">
-                    <span></span>
-                    <span></span>
-                    <span></span>
-                </button>
-                
-                <ul class="nav-menu" id="navMenu">
-                    <li><a href="{{ url_for('index') }}" class="nav-link {% if request.endpoint == 'index' %}active{% endif %}">Hem</a></li>
-                    <li><a href="#about" class="nav-link">Om Oss</a></li>
-                    <li><a href="#events" class="nav-link">Event</a></li>
-                    <li><a href="#membership" class="nav-link">Medlemskap</a></li>
-                    <li><a href="#contact" class="nav-link">Kontakt</a></li>
-                    <li><a href="#login" class="nav-link btn-login">Logga In</a></li>
-                </ul>
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="{{ url_for('main.index') }}" class="nav-logo">
+                <img src="{{ url_for('static', filename='images/hammarby-logo.png') }}" alt="Hammarby Logo" class="logo-img">
+                <span>Hammarby Supporterklubb</span>
+            </a>
+            <ul class="nav-menu">
+                <li><a href="{{ url_for('main.index') }}">Start</a></li>
+                <li><a href="{{ url_for('main.news_list') }}">Nyheter</a></li>
+                <li><a href="{{ url_for('main.board') }}">Styrelse</a></li>
+                <li><a href="{{ url_for('main.scholarship') }}">Stipendium</a></li>
+                <li><a href="{{ url_for('main.membership') }}">Medlem</a></li>
+                {% if current_user.is_authenticated %}
+                    {% if current_user.role == 'admin' %}
+                        <li><a href="{{ url_for('main.dashboard') }}">Admin</a></li>
+                    {% endif %}
+                    <li><a href="{{ url_for('main.logout') }}">Logga ut ({{ current_user.username }})</a></li>
+                {% else %}
+                    <li><a href="{{ url_for('main.login') }}">Admin</a></li>
+                {% endif %}
+            </ul>
+            <div class="hamburger">
+                <span></span>
+                <span></span>
+                <span></span>
             </div>
-        </nav>
-    </header>
+        </div>
+    </nav>
 
-    <!-- Main Content -->
     <main class="main-content">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                <div class="flash-messages">
+                    {% for category, message in messages %}
+                        <div class="flash-message flash-{{ category }}">
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        {% endwith %}
+        
         {% block content %}{% endblock %}
     </main>
 
-    <!-- Footer -->
-    <footer class="main-footer">
-        <div class="container">
-            <div class="footer-content">
-                <div class="footer-section">
-                    <h3>Hammarby Supporterklubb</h3>
-                    <p>Första och främsta!</p>
-                </div>
-                <div class="footer-section">
-                    <h4>Länkar</h4>
-                    <ul>
-                        <li><a href="#about">Om Oss</a></li>
-                        <li><a href="#events">Event</a></li>
-                        <li><a href="#membership">Medlemskap</a></li>
-                    </ul>
-                </div>
-                <div class="footer-section">
-                    <h4>Kontakt</h4>
-                    <ul>
-                        <li>Email: info@hammarby-support.se</li>
-                        <li>Telefon: +46 8 123 456 78</li>
-                    </ul>
-                </div>
-            </div>
-            <div class="footer-bottom">
-                <p>&copy; 2026 Hammarby Supporterklubb. Alla rättigheter förbehållna.</p>
-            </div>
+    <footer class="footer">
+        <div class="footer-container">
+            <p>&copy; 2026 Hammarby Supporterklubb. Alla rättigheter förbehållna.</p>
+            <p>En supporterklubb för Hammarby IF</p>
         </div>
     </footer>
 
-    <!-- JavaScript -->
     <script src="{{ url_for('static', filename='js/main.js') }}"></script>
     {% block extra_js %}{% endblock %}
 </body>

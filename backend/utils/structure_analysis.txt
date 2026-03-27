@@ -1,0 +1,4 @@
+Total divs: 93
+Total tables: 13
+News class elements: 11
+News links: 3

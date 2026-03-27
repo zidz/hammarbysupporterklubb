@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+
+{% block title %}Medlemskap - Hammarby Supporterklubb{% endblock %}
+
+{% block content %}
+<section class="membership-section">
+    <div class="container">
+        <h1>Bli Medlem</h1>
+        <p>Välkommen att bli en del av Hammarby Supporterklubb!</p>
+        
+        <div class="pricing-grid">
+            <div class="pricing-card">
+                <h3>Ungdom/Pensionär</h3>
+                <p class="price">100 kr/år</p>
+                <ul>
+                    <li>Tillgång till alla evenemang</li>
+                    <li>Nyhetsbrev</li>
+                    <li>Medlemsförmåner</li>
+                </ul>
+                <a href="mailto:medlem@hammarby.se?subject=Medlemsansökan Ungdom/Pensionär" class="btn btn-primary">Bli Medlem</a>
+            </div>
+            
+            <div class="pricing-card featured">
+                <h3>Senior</h3>
+                <p class="price">250 kr/år</p>
+                <ul>
+                    <li>Tillgång till alla evenemang</li>
+                    <li>Nyhetsbrev</li>
+                    <li>Medlemsförmåner</li>
+                    <li>Prioriterad support</li>
+                    <li>Exklusiva förmåner</li>
+                </ul>
+                <a href="mailto:medlem@hammarby.se?subject=Medlemsansökan Senior" class="btn btn-primary">Bli Medlem</a>
+            </div>
+        </div>
+        
+        <div class="payment-info">
+            <h2>Betalning</h2>
+            <p>Betalning sker enkelt via Swish. Skanna QR-koden nedan eller använd nummer 123456.</p>
+            
+            <div class="swish-qr">
+                <img src="{{ url_for('static', filename='images/swish-qr-placeholder.png') }}" alt="Swish QR-kod" class="qr-code">
+                <p>Swish: 123 456</p>
+            </div>
+        </div>
+        
+        <div class="membership-benefits">
+            <h2>Medlemsförmåner</h2>
+            <ul>
+                <li>📰 Exklusiva nyheter och uppdateringar</li>
+                <li>🎟️ Rabatt på evenemangsbiljetter</li>
+                <li>👕 Rabatt på supporterutrustning</li>
+                <li>🤝 Möjlighet att delta i klubbens aktiviteter</li>
+                <li>📧 Månadsvis nyhetsbrev</li>
+            </ul>
+        </div>
+    </div>
+</section>
+{% endblock %}

@@ -1,0 +1,9 @@
+[
+  {
+    "id": 1,
+    "username": "testuser",
+    "email": "test@hammarby.se",
+    "password_hash": "$2b$12$HOAdnz/aEf9u2w4ppKdc9eSkcT/QAZ9t5SZatoy9R5Q8whckhZdA6",
+    "role": "admin"
+  }
+]

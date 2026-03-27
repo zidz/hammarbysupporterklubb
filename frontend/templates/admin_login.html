@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+
+{% block title %}Admin Inloggning - Hammarby Supporterklubb{% endblock %}
+
+{% block content %}
+<div class="auth-container">
+    <div class="auth-card">
+        <div class="auth-header">
+            <img src="{{ url_for('static', filename='images/hammarby-logo.png') }}" alt="Hammarby Logo" class="auth-logo">
+            <h1>Admin Inloggning</h1>
+            <p>Logga in för att hantera supporterklubbens webbplats</p>
+        </div>
+        
+        <form method="POST" action="{{ url_for('main.login') }}" class="auth-form">
+            <div class="form-group">
+                <label for="username">Användarnamn</label>
+                <input type="text" id="username" name="username" required autocomplete="username" autofocus>
+            </div>
+            
+            <div class="form-group">
+                <label for="password">Lösenord</label>
+                <input type="password" id="password" name="password" required autocomplete="current-password">
+            </div>
+            
+            <button type="submit" class="btn btn-primary btn-block">Logga in</button>
+        </form>
+        
+        <div class="auth-footer">
+            <p>Glömt dina inloggningsuppgifter? Kontakta systemadministratören.</p>
+        </div>
+    </div>
+</div>
+{% endblock %}

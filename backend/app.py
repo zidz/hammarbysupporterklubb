@@ -1,12 +1,14 @@
 """Hammarby Supporterklubb Flask Application"""
 import os
+from datetime import timedelta
 from flask import Flask
 from werkzeug.middleware.proxy_fix import ProxyFix
+from backend.routes import bp, init_login
 
 
 def create_app():
     """Application factory for Flask app."""
-    app = Flask(__name__, 
+    app = Flask(__name__,
                 template_folder='../frontend/templates',
                 static_folder='../frontend/static')
     
@@ -22,14 +24,20 @@ def create_app():
     # Configuration
     app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'dev-secret-key-change-in-production')
     app.config['UPLOAD_FOLDER'] = os.path.join(os.path.dirname(__file__), 'uploads')
-    app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024  # 16MB max file size
+    app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024  # 16MB max file size (per test requirement)
+    
+    # Session configuration
+    app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(minutes=30)
     
     # Ensure upload folder exists
     os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
+    os.makedirs(os.path.join(app.config['UPLOAD_FOLDER'], 'news'), exist_ok=True)
     
-    # Register blueprints (to be added)
-    # from backend.routes import main
-    # app.register_blueprint(main.bp)
+    # Register blueprint
+    app.register_blueprint(bp)
+    
+    # Initialize Flask-Login
+    init_login(app)
     
     # Error handlers
     @app.errorhandler(404)

@@ -1,0 +1,75 @@
+{% extends "base.html" %}
+
+{% block title %}Admin Dashboard - Hammarby Supporterklubb{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="https://cdn.quilljs.com/1.3.6/quill.snow.css">
+{% endblock %}
+
+{% block content %}
+<div class="dashboard-container">
+    <div class="dashboard-header">
+        <h1>Admin Dashboard</h1>
+        <p>Hantera nyheter och innehåll</p>
+        <a href="{{ url_for('main.create_news') }}" class="btn btn-primary">Skapa Ny Nyhet</a>
+    </div>
+    
+    <div class="news-list">
+        <h2>Nyheter ({{ news|length }})</h2>
+        
+        {% if news %}
+        <table class="news-table">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Titel</th>
+                    <th>Kategori</th>
+                    <th>Författare</th>
+                    <th>Skapad</th>
+                    <th>Åtgärder</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in news %}
+                <tr>
+                    <td>{{ item.id }}</td>
+                    <td>{{ item.title }}</td>
+                    <td><span class="badge badge-{{ item.category }}">{{ item.category }}</span></td>
+                    <td>{{ item.author }}</td>
+                    <td>{{ item.created_at }}</td>
+                    <td class="actions">
+                        <a href="{{ url_for('main.edit_news', news_id=item.id) }}" class="btn btn-sm btn-secondary">Redigera</a>
+                        <form method="POST" action="{{ url_for('main.delete_news', news_id=item.id) }}" class="inline-form" onsubmit="return confirm('Är du säker på att du vill radera denna nyhet?')">
+                            <button type="submit" class="btn btn-sm btn-danger">Radera</button>
+                        </form>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% else %}
+        <p class="no-news">Inga nyheter finns ännu. Skapa din första nyhet!</p>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://cdn.quilljs.com/1.3.6/quill.js"></script>
+<script>
+var quill = new Quill('#editor', {
+    theme: 'snow',
+    modules: {
+        toolbar: [
+            ['bold', 'italic', 'underline'],
+            [{'header': [1, 2, 3, false]}],
+            [{'list': 'ordered'}, {'list': 'bullet'}],
+            [{'color': []}, {'background': []}],
+            [{'align': []}],
+            ['link', 'image'],
+            ['clean']
+        ]
+    }
+});
+</script>
+{% endblock %}

@@ -1,0 +1,45 @@
+Total news elements: 11
+
+News 1:
+  Classes: ['news']
+  ID: 
+
+News 2:
+  Classes: ['news']
+  ID: 
+
+News 3:
+  Classes: ['news']
+  ID: 
+
+News 4:
+  Classes: ['news']
+  ID: 
+
+News 5:
+  Classes: ['news']
+  ID: 
+
+News 6:
+  Classes: ['news']
+  ID: 
+
+News 7:
+  Classes: ['news']
+  ID: 
+
+News 8:
+  Classes: ['news']
+  ID: 
+
+News 9:
+  Classes: ['news']
+  ID: 
+
+News 10:
+  Classes: ['news']
+  ID: 
+
+News 11:
+  Classes: ['news']
+  ID: 

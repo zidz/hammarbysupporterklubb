@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+
+{% block title %}{{ news.title }} - Hammarby Supporterklubb{% endblock %}
+
+{% block content %}
+<section class="news-detail-section">
+    <div class="container">
+        <article class="news-detail">
+            <header class="news-detail-header">
+                <span class="news-category">{{ news.category }}</span>
+                <h1>{{ news.title }}</h1>
+                <div class="news-meta">
+                    <span>{{ news.created_at }}</span>
+                    <span>Av {{ news.author }}</span>
+                    {% if news.tags %}
+                    <div class="news-tags">
+                        {% for tag in news.tags %}
+                        <span class="tag">{{ tag }}</span>
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+                </div>
+            </header>
+            
+            <div class="news-detail-content">
+                {{ news.content|safe }}
+            </div>
+            
+            <footer class="news-detail-footer">
+                <a href="{{ url_for('main.news_list') }}" class="btn btn-secondary">Tillbaka till nyheter</a>
+            </footer>
+        </article>
+    </div>
+</section>
+{% endblock %}
