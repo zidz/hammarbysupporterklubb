@@ -366,6 +366,7 @@ start_server() {
     export FLASK_APP=backend/app.py
     export FLASK_ENV=development
     export FLASK_DEBUG=1
+    export PYTHONPATH="${SCRIPT_DIR}:${PYTHONPATH}"
     
     # Start server in background
     cd "$SCRIPT_DIR"
