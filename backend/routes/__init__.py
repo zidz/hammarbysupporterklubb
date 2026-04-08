@@ -45,12 +45,56 @@ def get_news_id_from_filename(filename):
     return hash(filename) % 1000000
 
 def load_news_from_file(filepath):
-    """Load news from file with proper ID handling."""
+    """Load news from file with proper ID handling and format transformation."""
     try:
         with open(filepath, 'r') as f:
             news_data = json.load(f)
+            
+            # Transform Quill Delta format to expected format
+            if 'ops' in news_data:
+                # Convert ops array to content string
+                content_parts = []
+                for op in news_data.get('ops', []):
+                    if 'insert' in op:
+                        content_parts.append(op['insert'])
+                news_data['content'] = ''.join(content_parts)
+            elif 'content' in news_data:
+                # Handle content field - could be JSON string or plain text
+                content = news_data['content']
+                if isinstance(content, str):
+                    # Try to parse as JSON (escaped JSON string)
+                    try:
+                        parsed_content = json.loads(content)
+                        if isinstance(parsed_content, dict) and 'ops' in parsed_content:
+                            # It's a Quill Delta JSON string - extract text
+                            content_parts = []
+                            for op in parsed_content.get('ops', []):
+                                if 'insert' in op:
+                                    content_parts.append(op['insert'])
+                            news_data['content'] = ''.join(content_parts)
+                        else:
+                            # It's already plain text
+                            pass
+                    except json.JSONDecodeError:
+                        # It's plain text, keep as is
+                        pass
+            
+            # Map date to created_at if not present
+            if 'date' in news_data and 'created_at' not in news_data:
+                news_data['created_at'] = news_data['date']
+            
+            # Set default author if not present
+            if 'author' not in news_data:
+                news_data['author'] = 'Styrelsen'
+            
+            # Set default category if not present
+            if 'category' not in news_data:
+                news_data['category'] = 'allmänt'
+            
+            # Set ID if not present
             if 'id' not in news_data:
                 news_data['id'] = get_news_id_from_filename(os.path.basename(filepath))
+            
             return news_data
     except (json.JSONDecodeError, IOError):
         return None
