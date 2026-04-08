@@ -67,11 +67,21 @@ check_python() {
         exit 1
     fi
     
-    PYTHON_VERSION=$(python3 --version | cut -d' ' -f2 | cut -d'.' -f1,2)
+    PYTHON_VERSION=$(python3 --version | cut -d' ' -f2)
     log_info "Found Python ${PYTHON_VERSION}"
     
-    # Check if Python version is sufficient
-    if (( $(echo "$PYTHON_VERSION < $MIN_PYTHON_VERSION" | bc -l) )); then
+    # Extract major and minor version numbers
+    PYTHON_MAJOR=$(echo "$PYTHON_VERSION" | cut -d'.' -f1)
+    PYTHON_MINOR=$(echo "$PYTHON_VERSION" | cut -d'.' -f2)
+    
+    MIN_MAJOR=$(echo "$MIN_PYTHON_VERSION" | cut -d'.' -f1)
+    MIN_MINOR=$(echo "$MIN_PYTHON_VERSION" | cut -d'.' -f2)
+    
+    # Compare versions properly
+    if [ "$PYTHON_MAJOR" -lt "$MIN_MAJOR" ]; then
+        log_error "Python version ${PYTHON_VERSION} is too old. Minimum required: ${MIN_PYTHON_VERSION}"
+        exit 1
+    elif [ "$PYTHON_MAJOR" -eq "$MIN_MAJOR" ] && [ "$PYTHON_MINOR" -lt "$MIN_MINOR" ]; then
         log_error "Python version ${PYTHON_VERSION} is too old. Minimum required: ${MIN_PYTHON_VERSION}"
         exit 1
     fi
