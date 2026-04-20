@@ -8,16 +8,20 @@
         <h1>Nyheter</h1>
         
         {% if news %}
-        <div class="news-grid">
+        <div class="news-list-full">
             {% for item in news %}
-            <article class="news-card">
-                <div class="news-content">
-                    <h2><a href="{{ url_for('main.news_detail', news_id=item.id) }}">{{ item.title }}</a></h2>
-                    <div class="news-meta">
-                        <span>{{ item.created_at }}</span>
-                        <span>Av {{ item.author }}</span>
+            <article class="news-article">
+                {% if item.image %}
+                <div class="news-image">
+                    <img src="{{ item.image }}" alt="{{ item.title }}">
+                </div>
+                {% endif %}
+                <div class="news-content-full">
+                    <span class="news-date">{{ item.created_at }}</span>
+                    <h2>{{ item.title }}</h2>
+                    <div class="news-body">
+                        {{ item.content }}
                     </div>
-                    <p class="news-excerpt">{{ item.content[:200] if item.content else 'Innehåll saknas' }}...</p>
                     <a href="{{ url_for('main.news_detail', news_id=item.id) }}" class="btn btn-secondary">Läs mer</a>
                 </div>
             </article>

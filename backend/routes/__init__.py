@@ -186,7 +186,7 @@ def index():
 def news_list():
     """Paginated news list."""
     page = request.args.get('page', 1, type=int)
-    per_page = 10
+    per_page = 3
     
     news_dir = os.path.join(os.path.dirname(__file__), '..', 'data', 'news')
     news_items = []
@@ -198,6 +198,9 @@ def news_list():
                 news_data = load_news_from_file(filepath)
                 if news_data:
                     news_items.append(news_data)
+    
+    # Sort by created_at descending (newest first)
+    news_items.sort(key=lambda x: x.get('created_at', ''), reverse=True)
     
     start = (page - 1) * per_page
     end = start + per_page

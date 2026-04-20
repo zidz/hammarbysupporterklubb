@@ -366,14 +366,14 @@ body {
     padding: 3rem 0;
 }
 
-.news-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
-    gap: 2rem;
+.news-list-full {
+    display: flex;
+    flex-direction: column;
+    gap: 3rem;
     margin: 2rem 0;
 }
 
-.news-card {
+.news-article {
     background: var(--hammarby-white);
     border-radius: 12px;
     overflow: hidden;
@@ -381,49 +381,52 @@ body {
     transition: var(--transition);
 }
 
-.news-card:hover {
-    transform: translateY(-4px);
+.news-article:hover {
     box-shadow: var(--shadow-hover);
 }
 
-.news-content {
-    padding: 1.5rem;
-}
-
-.news-category {
-    display: inline-block;
-    padding: 0.25rem 0.75rem;
+.news-image {
+    width: 100%;
+    height: 400px;
+    overflow: hidden;
     background: var(--hammarby-light);
-    color: var(--hammarby-green);
-    border-radius: 20px;
+}
+
+.news-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: var(--transition);
+}
+
+.news-article:hover .news-image img {
+    transform: scale(1.05);
+}
+
+.news-content-full {
+    padding: 2rem;
+}
+
+.news-date {
+    display: inline-block;
+    color: var(--text-light);
     font-size: 0.875rem;
-    font-weight: 600;
     margin-bottom: 1rem;
 }
 
-.news-card h2 {
-    margin-bottom: 0.75rem;
+.news-content-full h2 {
+    color: var(--hammarby-green);
+    margin-bottom: 1.5rem;
+    font-size: 2rem;
 }
 
-.news-card h2 a {
+.news-body {
     color: var(--text-dark);
-    text-decoration: none;
+    line-height: 1.8;
+    margin-bottom: 1.5rem;
 }
 
-.news-card h2 a:hover {
-    color: var(--hammarby-green);
-}
-
-.news-meta {
-    display: flex;
-    gap: 1rem;
-    color: var(--text-light);
-    font-size: 0.875rem;
-    margin-bottom: 1rem;
-}
-
-.news-excerpt {
-    color: var(--text-light);
+.news-body p {
     margin-bottom: 1rem;
 }
 
