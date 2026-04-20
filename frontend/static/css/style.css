@@ -387,20 +387,14 @@ body {
 
 .news-image {
     width: 100%;
-    height: 400px;
     overflow: hidden;
     background: var(--hammarby-light);
 }
 
 .news-image img {
     width: 100%;
-    height: 100%;
-    object-fit: cover;
-    transition: var(--transition);
-}
-
-.news-article:hover .news-image img {
-    transform: scale(1.05);
+    height: auto;
+    display: block;
 }
 
 .news-content-full {
