@@ -629,9 +629,21 @@ body {
 }
 
 .contact-card a {
-    color: var(--hammarby-green);
-    text-decoration: none;
+    color: var(--text-dark);
     font-weight: 600;
+    font-size: 1.125rem;
+}
+
+.contact-card a:hover {
+    text-decoration: underline;
+}
+
+.contact-link {
+    color: var(--text-dark);
+}
+
+.contact-link:hover {
+    color: var(--hammarby-green);
 }
 
 .contact-card a:hover {
