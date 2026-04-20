@@ -3,6 +3,7 @@ import os
 import json
 import re
 import uuid
+from datetime import date
 from functools import wraps
 from flask import Blueprint, render_template, request, redirect, url_for, flash, jsonify, current_app
 from flask_login import LoginManager, login_user, logout_user, login_required, current_user
@@ -260,8 +261,6 @@ def create_news():
     if request.method == 'POST':
         title = request.form.get('title', '').strip()
         content = request.form.get('content', '{}')
-        category = request.form.get('category', 'allmänt')
-        tags = request.form.get('tags', '').strip()
         
         if not title:
             flash('Title is required.', 'error')
@@ -290,15 +289,14 @@ def create_news():
         
         new_id = max(existing_ids, default=0) + 1
         
+        today = date.today().isoformat()
         news_data = {
             'id': new_id,
             'title': title,
             'content': content,
-            'category': category,
-            'tags': [t.strip() for t in tags.split(',') if t.strip()],
             'author': current_user.username,
-            'created_at': '2026-03-26',
-            'updated_at': '2026-03-26'
+            'created_at': today,
+            'updated_at': today
         }
         
         filename = f"nyhet_{new_id:04d}.json"
@@ -327,8 +325,6 @@ def edit_news(news_id):
     if request.method == 'POST':
         title = request.form.get('title', '').strip()
         content = request.form.get('content', '{}')
-        category = request.form.get('category', 'allmänt')
-        tags = request.form.get('tags', '').strip()
         
         if not title:
             flash('Title is required.', 'error')
@@ -346,9 +342,7 @@ def edit_news(news_id):
         
         news_data['title'] = title
         news_data['content'] = content
-        news_data['category'] = category
-        news_data['tags'] = [t.strip() for t in tags.split(',') if t.strip()]
-        news_data['updated_at'] = '2026-03-26'
+        news_data['updated_at'] = date.today().isoformat()
         
         news_dir = os.path.join(os.path.dirname(__file__), '..', 'data', 'news')
         filepath = os.path.join(news_dir, f"nyhet_{news_id:04d}.json")

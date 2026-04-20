@@ -12,7 +12,6 @@
             {% for item in news %}
             <article class="news-card">
                 <div class="news-content">
-                    <span class="news-category">{{ item.category }}</span>
                     <h2><a href="{{ url_for('main.news_detail', news_id=item.id) }}">{{ item.title }}</a></h2>
                     <div class="news-meta">
                         <span>{{ item.created_at }}</span>

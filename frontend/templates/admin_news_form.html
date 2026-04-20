@@ -20,22 +20,6 @@
         </div>
         
         <div class="form-group">
-            <label for="category">Kategori</label>
-            <select id="category" name="category">
-                <option value="allmänt" {% if news and news.category == 'allmänt' %}selected{% endif %}>Allmänt</option>
-                <option value="sport" {% if news and news.category == 'sport' %}selected{% endif %}>Sport</option>
-                <option value="medlemmar" {% if news and news.category == 'medlemmar' %}selected{% endif %}>Medlemmar</option>
-                <option value="stipendium" {% if news and news.category == 'stipendium' %}selected{% endif %}>Stipendium</option>
-                <option value="evenemang" {% if news and news.category == 'evenemang' %}selected{% endif %}>Evenemang</option>
-            </select>
-        </div>
-        
-        <div class="form-group">
-            <label for="tags">Taggar (kommaseparerade)</label>
-            <input type="text" id="tags" name="tags" value="{{ news.tags|join(', ') if news and news.tags else '' }}">
-        </div>
-        
-        <div class="form-group">
             <label for="editor">Innehåll *</label>
             <div id="editor">{{ news.content if news else '' }}</div>
             <input type="hidden" id="content" name="content" value="{{ news.content if news else '{}' }}">
