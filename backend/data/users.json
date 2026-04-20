@@ -5,5 +5,12 @@
     "email": "test@hammarby.se",
     "password_hash": "$2b$12$HOAdnz/aEf9u2w4ppKdc9eSkcT/QAZ9t5SZatoy9R5Q8whckhZdA6",
     "role": "admin"
+  },
+  {
+    "id": 2,
+    "username": "admin",
+    "email": "admin@hammarby.se",
+    "password_hash": "$2b$12$gm7Gjzp2mqFh59e46DluIuEUsu0UjcGc2qV4F7tWut3K.g95zlch.",
+    "role": "admin"
   }
 ]
