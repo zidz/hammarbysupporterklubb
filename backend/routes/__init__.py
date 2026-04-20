@@ -246,6 +246,11 @@ def membership():
     """Membership information page."""
     return render_template('medlem.html')
 
+@bp.route('/kontakt')
+def contact():
+    """Contact information page."""
+    return render_template('kontakt.html')
+
 # News CRUD routes (admin only)
 @bp.route('/admin/news/create', methods=['GET', 'POST'])
 @login_required

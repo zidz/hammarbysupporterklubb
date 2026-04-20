@@ -6,48 +6,33 @@
 <section class="hero">
     <div class="hero-overlay">
         <div class="hero-content">
-            <img src="{{ url_for('static', filename='images/hammarby-logo.png') }}" alt="Hammarby Logo" class="hero-logo">
             <h1>Välkommen till Hammarby Supporterklubb</h1>
             <p>En gemenskap för alla Hammarby-supportrar</p>
-            <a href="{{ url_for('main.membership') }}" class="btn btn-primary btn-large">Bli Medlem</a>
+            <div class="hero-buttons">
+                <a href="{{ url_for('main.membership') }}" class="btn btn-primary btn-large">Bli Medlem</a>
+                <a href="{{ url_for('main.scholarship') }}" class="btn btn-primary btn-large">Sök Stipendium</a>
+            </div>
         </div>
     </div>
 </section>
 
 <section class="welcome-section">
     <div class="container">
-        <h2>Välkommen till vår supporterklubb!</h2>
-        <p>Vi är en grupp engagerade Hammarby-supportrar som samlas för att fira vår älskade klubb. Oavsett om du är en gammal supportare eller ny i familjen, är du välkommen att vara med!</p>
+        <h2>🟢 Första och främsta! 🟢</h2>
         
-        <div class="about-section">
-            <h2>Om oss</h2>
-            <p>Hammarby Supporterklubb grundades för att samla alla som älskar vår gröna och vita klubb. Vi arrangerar evenemang, resor till matcher, och stödjer unga talanger genom vårt stipendium.</p>
-            <p>Vår vision är att skapa en stark gemenskap där alla supportrar känner sig hemma och kan dela sin passion för Hammarby IF.</p>
+        <div class="story-section">
+            <h3>En lång tradition av engagemang</h3>
+            <p>När Hammarby IF:s Supporterklubb bildades 1953, hade vi en vision som fortfarande driver oss idag: <strong>att stödja ungdomsidrotten inom Hammarby IF-familjen</strong>. Under jubileumsåret 2003 firade vi över 1600 engagerade medlemmar som delade denna passion.</p>
         </div>
-        
-        <div class="contact-section">
-            <h2>Kontakt</h2>
-            <p>Har du frågor eller vill du vara med? Kontakta oss!</p>
-            <ul>
-                <li>Email: info@hammarby-supporterklubb.se</li>
-                <li>Telefon: 08-123 456 78</li>
-                <li>Adress: Hammarbyvägen 1, 123 45 Stockholm</li>
-            </ul>
+
+        <div class="story-section">
+            <h3>Vi gör skillnad för ungdomar</h3>
+            <p>Vårt arbete ger resultat. Varje år tilldelar vi cirka <strong>40 000 kronor</strong> till unga talanger inom Hammarbyfamiljen. Bidrag och stipendier delas ut regelbundet till både enskilda ungdomar och lag – för att säkerställa att nästa generations stjärnor får det stöd de behöver.</p>
         </div>
-        
-        <div class="features">
-            <div class="feature-card">
-                <h3>📰 Nyheter</h3>
-                <p>Följ med i allt som händer i Hammarby-världen</p>
-            </div>
-            <div class="feature-card">
-                <h3>👥 Gemenskap</h3>
-                <p>Möt andra supportrar och dela din passion</p>
-            </div>
-            <div class="feature-card">
-                <h3>🏆 Stipendium</h3>
-                <p>Stödja unga talanger i Hammarby</p>
-            </div>
+
+        <div class="story-section">
+            <h3>En stark gemenskap</h3>
+            <p>Vi samlas månatligen för att diskutera aktuella frågor och driva vår verksamhet framåt. Allt vi gör vilar på <strong>ideell grund</strong> – varje medlem lägger sin fritid för att göra skillnad. När du blir medlem blir du en del av något större än dig själv.</p>
         </div>
     </div>
 </section>
