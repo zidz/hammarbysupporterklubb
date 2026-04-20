@@ -20,9 +20,8 @@
                     <span class="news-date">{{ item.created_at }}</span>
                     <h2>{{ item.title }}</h2>
                     <div class="news-body">
-                        {{ item.content }}
+                        {{ item.content|safe }}
                     </div>
-                    <a href="{{ url_for('main.news_detail', news_id=item.id) }}" class="btn btn-secondary">Läs mer</a>
                 </div>
             </article>
             {% endfor %}
