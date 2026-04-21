@@ -627,11 +627,7 @@ body {
 
 .contact-card a {
     color: var(--text-dark);
-    font-weight: 600;
     font-size: 1.125rem;
-}
-
-.contact-card a {
     text-decoration: none;
 }
 
