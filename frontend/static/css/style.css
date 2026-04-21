@@ -641,10 +641,7 @@ body {
 
 .contact-link:hover {
     color: var(--hammarby-green);
-}
-
-.contact-card a:hover {
-    text-decoration: underline;
+    text-decoration: none;
 }
 
 /* Scholarship */
