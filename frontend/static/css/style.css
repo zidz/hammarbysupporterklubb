@@ -595,7 +595,7 @@ body {
 
 .contact-grid {
     display: grid;
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
     gap: 2rem;
     margin: 2rem 0;
 }
@@ -872,5 +872,17 @@ body {
     .news-table th,
     .news-table td {
         padding: 0.5rem;
+    }
+    
+    .contact-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .contact-card {
+        padding: 1.5rem;
+    }
+    
+    .contact-section h1 {
+        font-size: 1.75rem;
     }
 }
