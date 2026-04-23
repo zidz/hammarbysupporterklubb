@@ -12,6 +12,7 @@
         </div>
         
         <form method="POST" action="{{ url_for('main.login') }}" class="auth-form">
+            {{ csrf_token() }}
             <div class="form-group">
                 <label for="username">Användarnamn</label>
                 <input type="text" id="username" name="username" required autocomplete="username" autofocus>

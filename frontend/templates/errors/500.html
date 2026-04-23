@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+
+{% block title %}Internt fel - Hammarby Supporterklubb{% endblock %}
+
+{% block content %}
+<section class="error-section">
+    <div class="container">
+        <h1>500</h1>
+        <p>Ett internt fel inträffade. Vänligen försök igen senare.</p>
+        <a href="{{ url_for('main.index') }}" class="btn btn-primary">Tillbaka till startsidan</a>
+    </div>
+</section>
+{% endblock %}

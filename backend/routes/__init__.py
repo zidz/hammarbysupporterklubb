@@ -357,7 +357,7 @@ def edit_news(news_id):
     
     return render_template('admin_news_form.html', news=news_data)
 
-@bp.route('/admin/news/<int:news_id>/delete', methods=['POST', 'GET'])
+@bp.route('/admin/news/<int:news_id>/delete', methods=['POST'])
 @login_required
 @admin_required
 def delete_news(news_id):
