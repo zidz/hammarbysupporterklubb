@@ -109,55 +109,57 @@
 {% block extra_js %}
 <script src="https://cdn.quilljs.com/1.3.6/quill.js"></script>
 <script>
-var quill = new Quill('#editor', {
-    theme: 'snow',
-    modules: {
-        toolbar: [
-            ['bold', 'italic', 'underline'],
-            [{'header': [1, 2, 3, false]}],
-            [{'list': 'ordered'}, {'list': 'bullet'}],
-            [{'align': []}],
-            ['link', 'image'],
-            ['clean']
-        ]
-    }
-});
+document.addEventListener('DOMContentLoaded', function() {
+    var quill = new Quill('#editor', {
+        theme: 'snow',
+        modules: {
+            toolbar: [
+                ['bold', 'italic', 'underline'],
+                [{'header': [1, 2, 3, false]}],
+                [{'list': 'ordered'}, {'list': 'bullet'}],
+                [{'align': []}],
+                ['link', 'image'],
+                ['clean']
+            ]
+        }
+    });
 
 {% if news and news.content %}
-quill.clipboard.dangerouslyPasteHTML({{ news.content|tojson }});
+    quill.clipboard.dangerouslyPasteHTML({{ news.content|tojson }});
 {% endif %}
 
-document.querySelector('.news-form').addEventListener('submit', function(e) {
-    document.getElementById('content').value = quill.root.innerHTML;
-});
+    document.querySelector('.news-form').addEventListener('submit', function(e) {
+        document.getElementById('content').value = quill.root.innerHTML;
+    });
 
-var imageInput = document.getElementById('image');
-var previewDiv = document.getElementById('image-preview');
-var previewImg = document.getElementById('preview-img');
-var removeBtn = document.getElementById('remove-image');
-var imagePathInput = document.getElementById('image_path');
-var uploadArea = document.getElementById('upload-area');
+    var imageInput = document.getElementById('image');
+    var previewDiv = document.getElementById('image-preview');
+    var previewImg = document.getElementById('preview-img');
+    var removeBtn = document.getElementById('remove-image');
+    var imagePathInput = document.getElementById('image_path');
+    var uploadArea = document.getElementById('upload-area');
 
-imageInput.addEventListener('change', function(e) {
-    var file = e.target.files[0];
-    if (file) {
-        var reader = new FileReader();
-        reader.onload = function(e) {
-            previewImg.src = e.target.result;
-            previewDiv.style.display = 'block';
-            uploadArea.style.display = 'none';
-            imagePathInput.value = '';
-        };
-        reader.readAsDataURL(file);
-    }
-});
+    imageInput.addEventListener('change', function(e) {
+        var file = e.target.files[0];
+        if (file) {
+            var reader = new FileReader();
+            reader.onload = function(e) {
+                previewImg.src = e.target.result;
+                previewDiv.style.display = 'block';
+                uploadArea.style.display = 'none';
+                imagePathInput.value = '';
+            };
+            reader.readAsDataURL(file);
+        }
+    });
 
-removeBtn.addEventListener('click', function(e) {
-    e.preventDefault();
-    imageInput.value = '';
-    previewDiv.style.display = 'none';
-    uploadArea.style.display = 'block';
-    imagePathInput.value = '';
+    removeBtn.addEventListener('click', function(e) {
+        e.preventDefault();
+        imageInput.value = '';
+        previewDiv.style.display = 'none';
+        uploadArea.style.display = 'block';
+        imagePathInput.value = '';
+    });
 });
 </script>
 {% endblock %}
