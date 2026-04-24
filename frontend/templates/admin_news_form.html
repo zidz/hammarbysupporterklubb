@@ -87,6 +87,18 @@
 
         <div class="form-group">
             <label>Bild</label>
+{% if news and news.image %}
+            <div class="image-preview" id="image-preview" style="display: block;">
+                <img id="preview-img" src="{{ news.image }}" alt="Förhandsvisning">
+                <br>
+                <span class="remove-image" id="replace-image">Byt bild</span>
+                <span class="remove-image" id="remove-image">Ta bort bild</span>
+            </div>
+            <div class="image-upload-area" id="upload-area" style="display: none;">
+                <input type="file" id="image" name="image" accept="image/jpeg,image/jpg,image/png,image/gif,image/webp">
+                <label for="image" class="upload-label">Klicka här för att ladda upp en bild (JPG, PNG, GIF, WebP)</label>
+            </div>
+{% else %}
             <div class="image-upload-area" id="upload-area">
                 <input type="file" id="image" name="image" accept="image/jpeg,image/jpg,image/png,image/gif,image/webp">
                 <label for="image" class="upload-label">Klicka här för att ladda upp en bild (JPG, PNG, GIF, WebP)</label>
@@ -96,6 +108,7 @@
                 <br>
                 <span class="remove-image" id="remove-image">Ta bort bild</span>
             </div>
+{% endif %}
         </div>
 
         <div class="form-actions">
@@ -136,6 +149,7 @@ document.addEventListener('DOMContentLoaded', function() {
     var previewDiv = document.getElementById('image-preview');
     var previewImg = document.getElementById('preview-img');
     var removeBtn = document.getElementById('remove-image');
+    var replaceBtn = document.getElementById('replace-image');
     var imagePathInput = document.getElementById('image_path');
     var uploadArea = document.getElementById('upload-area');
 
@@ -152,6 +166,14 @@ document.addEventListener('DOMContentLoaded', function() {
             reader.readAsDataURL(file);
         }
     });
+
+    if (replaceBtn) {
+        replaceBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            previewDiv.style.display = 'none';
+            uploadArea.style.display = 'block';
+        });
+    }
 
     removeBtn.addEventListener('click', function(e) {
         e.preventDefault();
