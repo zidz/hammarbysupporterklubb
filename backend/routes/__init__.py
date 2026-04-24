@@ -88,10 +88,6 @@ def load_news_from_file(filepath):
             if 'author' not in news_data:
                 news_data['author'] = 'Styrelsen'
             
-            # Set default category if not present
-            if 'category' not in news_data:
-                news_data['category'] = 'allmänt'
-            
             # Set ID if not present
             if 'id' not in news_data:
                 news_data['id'] = get_news_id_from_filename(os.path.basename(filepath))
@@ -275,9 +271,49 @@ def create_news():
             return render_template('admin_news_form.html', news=None)
         
         # Validate content length
-        if len(content) > 10000:
-            flash('Content is too long. Maximum length is 10000 characters.', 'error')
+        if len(content) > 100000:
+            flash('Content is too long. Maximum length is 100000 characters.', 'error')
             return render_template('admin_news_form.html', news=None)
+        
+        image_path = request.form.get('image_path', '')
+        uploaded_image = None
+        
+        if 'image' in request.files and request.files['image'].filename:
+            from PIL import Image as PILImage
+            file = request.files['image']
+            filename = file.filename
+            ext = filename.rsplit('.', 1)[1].lower() if '.' in filename else ''
+            allowed_extensions = {'jpg', 'jpeg', 'png', 'gif', 'webp'}
+            if ext in allowed_extensions:
+                try:
+                    file.seek(0, 2)
+                    file_size = file.tell()
+                    file.seek(0)
+                    if file_size <= 16 * 1024 * 1024:
+                        file.seek(0)
+                        img = PILImage.open(file)
+                        img.load()
+                        file.seek(0)
+                        img = PILImage.open(file)
+                        if img.mode in ('RGBA', 'P'):
+                            background = PILImage.new('RGB', img.size, (255, 255, 255))
+                            if img.mode == 'P':
+                                img = img.convert('RGBA')
+                            background.paste(img, mask=img.split()[-1] if img.mode == 'RGBA' else None)
+                            img = background
+                        elif img.mode != 'RGB':
+                            img = img.convert('RGB')
+                        if img.width > 1920 or img.height > 1080:
+                            img.thumbnail((1920, 1080), PILImage.Resampling.LANCZOS)
+                        unique_id = str(uuid.uuid4())
+                        safe_name = secure_filename(filename.rsplit('.', 1)[0] if '.' in filename else 'image')
+                        new_filename = f"{safe_name}_{unique_id}.jpg"
+                        upload_dir = current_app.config['UPLOAD_FOLDER']
+                        os.makedirs(upload_dir, exist_ok=True)
+                        img.save(os.path.join(upload_dir, new_filename), 'JPEG', quality=85, optimize=True)
+                        uploaded_image = f"/static/uploads/{new_filename}"
+                except Exception:
+                    flash('Error processing image.', 'error')
         
         news_dir = os.path.join(os.path.dirname(__file__), '..', 'data', 'news')
         existing_ids = []
@@ -301,6 +337,10 @@ def create_news():
             'created_at': today,
             'updated_at': today
         }
+        if uploaded_image:
+            news_data['image'] = uploaded_image
+        elif image_path:
+            news_data['image'] = image_path
         
         filename = f"nyhet_{new_id:04d}.json"
         filepath = os.path.join(news_dir, filename)
@@ -327,25 +367,70 @@ def edit_news(news_id):
     
     if request.method == 'POST':
         title = request.form.get('title', '').strip()
-        content = request.form.get('content', '{}')
+        content = request.form.get('content', '')
         
         if not title:
             flash('Title is required.', 'error')
             return render_template('admin_news_form.html', news=news_data)
         
-        # Validate title length
         if len(title) > 200:
             flash('Title is too long. Maximum length is 200 characters.', 'error')
             return render_template('admin_news_form.html', news=news_data)
         
-        # Validate content length
-        if len(content) > 10000:
-            flash('Content is too long. Maximum length is 10000 characters.', 'error')
+        if len(content) > 100000:
+            flash('Content is too long. Maximum length is 100000 characters.', 'error')
             return render_template('admin_news_form.html', news=news_data)
+        
+        image_path = request.form.get('image_path', '')
+        uploaded_image = None
+        
+        if 'image' in request.files and request.files['image'].filename:
+            from PIL import Image as PILImage
+            file = request.files['image']
+            filename = file.filename
+            ext = filename.rsplit('.', 1)[1].lower() if '.' in filename else ''
+            allowed_extensions = {'jpg', 'jpeg', 'png', 'gif', 'webp'}
+            if ext in allowed_extensions:
+                try:
+                    file.seek(0, 2)
+                    file_size = file.tell()
+                    file.seek(0)
+                    if file_size <= 16 * 1024 * 1024:
+                        file.seek(0)
+                        img = PILImage.open(file)
+                        img.load()
+                        file.seek(0)
+                        img = PILImage.open(file)
+                        if img.mode in ('RGBA', 'P'):
+                            background = PILImage.new('RGB', img.size, (255, 255, 255))
+                            if img.mode == 'P':
+                                img = img.convert('RGBA')
+                            background.paste(img, mask=img.split()[-1] if img.mode == 'RGBA' else None)
+                            img = background
+                        elif img.mode != 'RGB':
+                            img = img.convert('RGB')
+                        if img.width > 1920 or img.height > 1080:
+                            img.thumbnail((1920, 1080), PILImage.Resampling.LANCZOS)
+                        unique_id = str(uuid.uuid4())
+                        safe_name = secure_filename(filename.rsplit('.', 1)[0] if '.' in filename else 'image')
+                        new_filename = f"{safe_name}_{unique_id}.jpg"
+                        upload_dir = current_app.config['UPLOAD_FOLDER']
+                        os.makedirs(upload_dir, exist_ok=True)
+                        img.save(os.path.join(upload_dir, new_filename), 'JPEG', quality=85, optimize=True)
+                        uploaded_image = f"/static/uploads/{new_filename}"
+                except Exception:
+                    flash('Error processing image.', 'error')
         
         news_data['title'] = title
         news_data['content'] = content
         news_data['updated_at'] = date.today().isoformat()
+        
+        if uploaded_image:
+            news_data['image'] = uploaded_image
+        elif image_path:
+            news_data['image'] = image_path
+        elif 'image' in news_data:
+            del news_data['image']
         
         news_dir = os.path.join(os.path.dirname(__file__), '..', 'data', 'news')
         filepath = os.path.join(news_dir, f"nyhet_{news_id:04d}.json")

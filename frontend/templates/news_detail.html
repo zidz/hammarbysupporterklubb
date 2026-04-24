@@ -12,7 +12,13 @@
                     <span>{{ news.created_at }}</span>
                 </div>
             </header>
-            
+
+            {% if news.image %}
+            <div class="news-detail-image">
+                <img src="{{ news.image }}" alt="{{ news.title }}">
+            </div>
+            {% endif %}
+
             <div class="news-detail-content">
                 {{ news.content|safe }}
             </div>

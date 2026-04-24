@@ -27,7 +27,12 @@
                 {% if current_user.is_authenticated %}
                     {% if current_user.role == 'admin' %}
                         <li class="admin-dropdown">
-                            <a href="{{ url_for('main.dashboard') }}">Admin</a>
+                            <a href="{{ url_for('main.dashboard') }}" class="admin-toggle">
+                                Admin
+                                <span class="admin-chevron">
+                                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                                </span>
+                            </a>
                             <div class="admin-dropdown-content">
                                 <span class="admin-user">{{ current_user.username }}</span>
                                 <a href="{{ url_for('main.logout') }}" class="logout-btn">

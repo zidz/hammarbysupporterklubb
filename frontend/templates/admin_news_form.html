@@ -4,6 +4,61 @@
 
 {% block extra_css %}
 <link rel="stylesheet" href="https://cdn.quilljs.com/1.3.6/quill.snow.css">
+<style>
+    .editor-container {
+        background: #fff;
+        border: 2px solid #ddd;
+        border-radius: 6px;
+        overflow: hidden;
+    }
+    .editor-container .ql-container {
+        min-height: 250px;
+        font-size: 1rem;
+    }
+    .editor-container .ql-toolbar {
+        background: #f9f9f9;
+    }
+    .image-upload-area {
+        border: 2px dashed #ccc;
+        border-radius: 6px;
+        padding: 1.5rem;
+        text-align: center;
+        cursor: pointer;
+        transition: var(--transition);
+        background: #fafafa;
+    }
+    .image-upload-area:hover {
+        border-color: var(--hammarby-green);
+        background: #f0faf4;
+    }
+    .image-upload-area input[type="file"] {
+        display: none;
+    }
+    .image-upload-area .upload-label {
+        color: var(--text-light);
+        font-size: 0.9rem;
+    }
+    .image-preview {
+        margin-top: 1rem;
+        max-width: 300px;
+        border-radius: 6px;
+        display: none;
+    }
+    .image-preview img {
+        max-width: 100%;
+        border-radius: 6px;
+    }
+    .image-preview .remove-image {
+        display: inline-block;
+        margin-top: 0.5rem;
+        color: #e74c3c;
+        cursor: pointer;
+        font-size: 0.85rem;
+    }
+    .image-preview .remove-image:hover {
+        text-decoration: underline;
+    }
+</style>
 {% endblock %}
 
 {% block content %}
@@ -12,20 +67,37 @@
         <h1>{% if news %}Redigera Nyhet{% else %}Skapa Ny Nyhet{% endif %}</h1>
         <a href="{{ url_for('main.dashboard') }}" class="btn btn-secondary">Tillbaka till Dashboard</a>
     </div>
-    
-<form method="POST" class="news-form">
+
+    <form method="POST" action="{% if news %}{{ url_for('main.edit_news', news_id=news.id) }}{% else %}{{ url_for('main.create_news') }}{% endif %}" class="news-form" enctype="multipart/form-data">
         <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <input type="hidden" id="content" name="content">
+        <input type="hidden" id="image_path" name="image_path" value="{{ news.image if news and news.image else '' }}">
+
         <div class="form-group">
             <label for="title">Titel *</label>
             <input type="text" id="title" name="title" value="{{ news.title if news else '' }}" required>
         </div>
-        
+
         <div class="form-group">
-            <label for="editor">Innehåll *</label>
-            <div id="editor">{{ news.content if news else '' }}</div>
-            <input type="hidden" id="content" name="content" value="{{ news.content if news else '{}' }}">
+            <label>Innehåll *</label>
+            <div class="editor-container">
+                <div id="editor"></div>
+            </div>
         </div>
-        
+
+        <div class="form-group">
+            <label>Bild</label>
+            <div class="image-upload-area" id="upload-area">
+                <input type="file" id="image" name="image" accept="image/jpeg,image/jpg,image/png,image/gif,image/webp">
+                <label for="image" class="upload-label">Klicka här för att ladda upp en bild (JPG, PNG, GIF, WebP)</label>
+            </div>
+            <div class="image-preview" id="image-preview">
+                <img id="preview-img" src="" alt="Förhandsvisning">
+                <br>
+                <span class="remove-image" id="remove-image">Ta bort bild</span>
+            </div>
+        </div>
+
         <div class="form-actions">
             <button type="submit" class="btn btn-primary">Spara Nyhet</button>
             <a href="{{ url_for('main.dashboard') }}" class="btn btn-secondary">Avbryt</a>
@@ -44,7 +116,6 @@ var quill = new Quill('#editor', {
             ['bold', 'italic', 'underline'],
             [{'header': [1, 2, 3, false]}],
             [{'list': 'ordered'}, {'list': 'bullet'}],
-            [{'color': []}, {'background': []}],
             [{'align': []}],
             ['link', 'image'],
             ['clean']
@@ -52,21 +123,41 @@ var quill = new Quill('#editor', {
     }
 });
 
-// Set initial content if editing
-{% if news %}
-try {
-    var contents = JSON.parse('{{ news.content|safe }}');
-    if (contents.ops) {
-        quill.setContents(contents.ops);
-    }
-} catch(e) {
-    // Not JSON, use as plain text
-}
+{% if news and news.content %}
+quill.clipboard.dangerouslyPasteHTML({{ news.content|tojson }});
 {% endif %}
 
-// Save content on submit
 document.querySelector('.news-form').addEventListener('submit', function(e) {
-    document.getElementById('content').value = JSON.stringify(quill.getContents());
+    document.getElementById('content').value = quill.root.innerHTML;
+});
+
+var imageInput = document.getElementById('image');
+var previewDiv = document.getElementById('image-preview');
+var previewImg = document.getElementById('preview-img');
+var removeBtn = document.getElementById('remove-image');
+var imagePathInput = document.getElementById('image_path');
+var uploadArea = document.getElementById('upload-area');
+
+imageInput.addEventListener('change', function(e) {
+    var file = e.target.files[0];
+    if (file) {
+        var reader = new FileReader();
+        reader.onload = function(e) {
+            previewImg.src = e.target.result;
+            previewDiv.style.display = 'block';
+            uploadArea.style.display = 'none';
+            imagePathInput.value = '';
+        };
+        reader.readAsDataURL(file);
+    }
+});
+
+removeBtn.addEventListener('click', function(e) {
+    e.preventDefault();
+    imageInput.value = '';
+    previewDiv.style.display = 'none';
+    uploadArea.style.display = 'block';
+    imagePathInput.value = '';
 });
 </script>
 {% endblock %}
