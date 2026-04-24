@@ -599,6 +599,43 @@ body {
     gap: 0.5rem;
 }
 
+.news-table .news-title {
+    max-width: 300px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.btn-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    border-radius: 6px;
+    border: none;
+    cursor: pointer;
+    transition: var(--transition);
+    text-decoration: none;
+    background: transparent;
+}
+
+.btn-icon-edit {
+    color: var(--hammarby-green);
+}
+
+.btn-icon-edit:hover {
+    background: var(--hammarby-light);
+}
+
+.btn-icon-delete {
+    color: #e74c3c;
+}
+
+.btn-icon-delete:hover {
+    background: #fdecea;
+}
+
 .inline-form {
     display: inline;
 }

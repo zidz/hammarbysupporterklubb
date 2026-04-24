@@ -170,6 +170,8 @@ def dashboard():
                 if news_data:
                     news_list.append(news_data)
     
+    news_list.sort(key=lambda x: x.get('created_at', ''), reverse=True)
+    
     return render_template('admin_dashboard.html', news=news_list)
 
 # Public routes

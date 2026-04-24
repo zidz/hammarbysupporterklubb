@@ -2,10 +2,6 @@
 
 {% block title %}Admin Dashboard - Hammarby Supporterklubb{% endblock %}
 
-{% block extra_css %}
-<link rel="stylesheet" href="https://cdn.quilljs.com/1.3.6/quill.snow.css">
-{% endblock %}
-
 {% block content %}
 <div class="dashboard-container">
     <div class="dashboard-header">
@@ -13,17 +9,15 @@
         <p>Hantera nyheter och innehåll</p>
         <a href="{{ url_for('main.create_news') }}" class="btn btn-primary">Skapa Ny Nyhet</a>
     </div>
-    
+
     <div class="news-list">
         <h2>Nyheter ({{ news|length }})</h2>
-        
+
         {% if news %}
         <table class="news-table">
             <thead>
                 <tr>
-                    <th>ID</th>
                     <th>Titel</th>
-                    <th>Författare</th>
                     <th>Skapad</th>
                     <th>Åtgärder</th>
                 </tr>
@@ -31,15 +25,17 @@
             <tbody>
                 {% for item in news %}
                 <tr>
-                    <td>{{ item.id }}</td>
-                    <td>{{ item.title }}</td>
-                    <td>{{ item.author }}</td>
+                    <td class="news-title">{{ item.title }}</td>
                     <td>{{ item.created_at }}</td>
                     <td class="actions">
-                        <a href="{{ url_for('main.edit_news', news_id=item.id) }}" class="btn btn-sm btn-secondary">Redigera</a>
+                        <a href="{{ url_for('main.edit_news', news_id=item.id) }}" class="btn-icon btn-icon-edit" title="Redigera">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
+                        </a>
                         <form method="POST" action="{{ url_for('main.delete_news', news_id=item.id) }}" class="inline-form" onsubmit="return confirm('Är du säker på att du vill radera denna nyhet?')">
                             <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-                            <button type="submit" class="btn btn-sm btn-danger">Radera</button>
+                            <button type="submit" class="btn-icon btn-icon-delete" title="Radera">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+                            </button>
                         </form>
                     </td>
                 </tr>
@@ -51,24 +47,4 @@
         {% endif %}
     </div>
 </div>
-{% endblock %}
-
-{% block extra_js %}
-<script src="https://cdn.quilljs.com/1.3.6/quill.js"></script>
-<script>
-var quill = new Quill('#editor', {
-    theme: 'snow',
-    modules: {
-        toolbar: [
-            ['bold', 'italic', 'underline'],
-            [{'header': [1, 2, 3, false]}],
-            [{'list': 'ordered'}, {'list': 'bullet'}],
-            [{'color': []}, {'background': []}],
-            [{'align': []}],
-            ['link', 'image'],
-            ['clean']
-        ]
-    }
-});
-</script>
 {% endblock %}
