@@ -38,7 +38,7 @@
                     <td class="actions">
                         <a href="{{ url_for('main.edit_news', news_id=item.id) }}" class="btn btn-sm btn-secondary">Redigera</a>
                         <form method="POST" action="{{ url_for('main.delete_news', news_id=item.id) }}" class="inline-form" onsubmit="return confirm('Är du säker på att du vill radera denna nyhet?')">
-                            {{ csrf_token() }}
+                            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                             <button type="submit" class="btn btn-sm btn-danger">Radera</button>
                         </form>
                     </td>
