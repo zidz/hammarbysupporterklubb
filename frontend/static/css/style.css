@@ -82,6 +82,23 @@ body {
     position: relative;
 }
 
+.admin-toggle {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+}
+
+.admin-menu-icon {
+    display: inline-flex;
+    align-items: center;
+    opacity: 0.7;
+    transition: var(--transition);
+}
+
+.admin-dropdown.active .admin-menu-icon {
+    opacity: 1;
+}
+
 .admin-dropdown-content {
     display: none;
     position: absolute;
@@ -97,7 +114,7 @@ body {
     gap: 0.5rem;
 }
 
-.admin-dropdown:hover .admin-dropdown-content {
+.admin-dropdown.active .admin-dropdown-content {
     display: flex;
 }
 
@@ -123,6 +140,10 @@ body {
 
 .logout-btn:hover {
     background: var(--hammarby-light);
+}
+
+.mobile-logout {
+    display: none;
 }
 
 .hamburger {
@@ -982,24 +1003,14 @@ body {
     }
 
     .admin-dropdown-content {
-        position: static;
-        display: flex;
-        box-shadow: none;
-        background: rgba(255, 255, 255, 0.1);
-        border-radius: 4px;
-        padding: 0.5rem;
+        display: none !important;
     }
 
-    .admin-user {
-        color: rgba(255, 255, 255, 0.7);
-        border-bottom-color: rgba(255, 255, 255, 0.2);
+    .admin-menu-icon {
+        display: none;
     }
 
-    .logout-btn {
-        color: var(--hammarby-white);
-    }
-
-    .logout-btn:hover {
-        background: rgba(255, 255, 255, 0.2);
+    .mobile-logout {
+        display: block;
     }
 }

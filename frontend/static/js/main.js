@@ -19,6 +19,21 @@ document.addEventListener('DOMContentLoaded', function() {
             hamburger.classList.remove('active');
         }
     });
+
+    // Admin dropdown toggle (click only, not hover)
+    const adminToggle = document.querySelector('.admin-toggle');
+    const adminDropdown = document.querySelector('.admin-dropdown');
+    if (adminToggle && adminDropdown) {
+        adminToggle.addEventListener('click', function(e) {
+            e.preventDefault();
+            adminDropdown.classList.toggle('active');
+        });
+        document.addEventListener('click', function(event) {
+            if (!adminDropdown.contains(event.target)) {
+                adminDropdown.classList.remove('active');
+            }
+        });
+    }
     
     // Auto-hide flash messages after 5 seconds
     const flashMessages = document.querySelectorAll('.flash-message');

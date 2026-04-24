@@ -29,8 +29,8 @@
                         <li class="admin-dropdown">
                             <a href="{{ url_for('main.dashboard') }}" class="admin-toggle">
                                 Admin
-                                <span class="admin-chevron">
-                                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                                <span class="admin-menu-icon">
+                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
                                 </span>
                             </a>
                             <div class="admin-dropdown-content">
@@ -42,6 +42,7 @@
                             </div>
                         </li>
                     {% endif %}
+                    <li class="mobile-logout"><a href="{{ url_for('main.logout') }}">Logga ut</a></li>
                 {% else %}
                     <li><a href="{{ url_for('main.login') }}">Admin</a></li>
                 {% endif %}
