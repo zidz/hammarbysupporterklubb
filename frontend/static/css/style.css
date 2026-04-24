@@ -77,6 +77,54 @@ body {
     background-color: rgba(255, 255, 255, 0.2);
 }
 
+/* Admin dropdown */
+.admin-dropdown {
+    position: relative;
+}
+
+.admin-dropdown-content {
+    display: none;
+    position: absolute;
+    top: 100%;
+    right: 0;
+    background: var(--hammarby-white);
+    border-radius: 8px;
+    box-shadow: var(--shadow-hover);
+    padding: 0.75rem 1rem;
+    min-width: 160px;
+    z-index: 100;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.admin-dropdown:hover .admin-dropdown-content {
+    display: flex;
+}
+
+.admin-user {
+    font-size: 0.8rem;
+    color: var(--text-light);
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid var(--hammarby-light);
+}
+
+.logout-btn {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: var(--hammarby-green);
+    text-decoration: none;
+    font-size: 0.85rem;
+    font-weight: 500;
+    padding: 0.35rem 0.5rem;
+    border-radius: 4px;
+    transition: var(--transition);
+}
+
+.logout-btn:hover {
+    background: var(--hammarby-light);
+}
+
 .hamburger {
     display: none;
     flex-direction: column;
@@ -877,5 +925,27 @@ body {
     
     .contact-section h1 {
         font-size: 1.75rem;
+    }
+
+    .admin-dropdown-content {
+        position: static;
+        display: flex;
+        box-shadow: none;
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 4px;
+        padding: 0.5rem;
+    }
+
+    .admin-user {
+        color: rgba(255, 255, 255, 0.7);
+        border-bottom-color: rgba(255, 255, 255, 0.2);
+    }
+
+    .logout-btn {
+        color: var(--hammarby-white);
+    }
+
+    .logout-btn:hover {
+        background: rgba(255, 255, 255, 0.2);
     }
 }
