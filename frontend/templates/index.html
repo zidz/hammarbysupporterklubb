@@ -18,19 +18,36 @@
 
 <section class="welcome-section">
     <div class="container">
-        <div class="story-section">
-            <h3>En lång tradition av engagemang</h3>
-            <p>När Hammarby IF:s Supporterklubb bildades 1953, hade vi en vision som fortfarande driver oss idag: <strong>att stödja ungdomsidrotten inom Hammarby IF-familjen</strong>. Under jubileumsåret 2003 firade vi över 1600 engagerade medlemmar som delade denna passion.</p>
-        </div>
-
-        <div class="story-section">
-            <h3>Vi gör skillnad för ungdomar</h3>
-            <p>Vårt arbete ger resultat. Varje år tilldelar vi cirka <strong>40 000 kronor</strong> till unga talanger inom Hammarbyfamiljen. Bidrag och stipendier delas ut regelbundet till både enskilda ungdomar och lag – för att säkerställa att nästa generations stjärnor får det stöd de behöver.</p>
-        </div>
-
-        <div class="story-section">
-            <h3>En stark gemenskap</h3>
-            <p>Vi samlas månatligen för att diskutera aktuella frågor och driva vår verksamhet framåt. Allt vi gör vilar på <strong>ideell grund</strong> – varje medlem lägger sin fritid för att göra skillnad. När du blir medlem blir du en del av något större än dig själv.</p>
+        <div class="welcome-grid">
+            {% for item in latest_news %}
+            <article class="news-card">
+                {% if item.image %}
+                <div class="news-card-image">
+                    <img src="{{ item.image }}" alt="{{ item.title }}">
+                </div>
+                {% else %}
+                <div class="news-card-image news-card-image-placeholder">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>
+                </div>
+                {% endif %}
+                <div class="news-card-content">
+                    <h3>{{ item.title }}</h3>
+                    <a href="{{ url_for('main.news_detail', news_id=item.id) }}" class="news-card-link">Läs mer</a>
+                </div>
+            </article>
+            {% endfor %}
+            <div class="story-section">
+                <h3>En lång tradition av engagemang</h3>
+                <p>När Hammarby IF:s Supporterklubb bildades 1953, hade vi en vision som fortfarande driver oss idag: <strong>att stödja ungdomsidrotten inom Hammarby IF-familjen</strong>. Under jubileumsåret 2003 firade vi över 1600 engagerade medlemmar som delade denna passion.</p>
+            </div>
+            <div class="story-section">
+                <h3>Vi gör skillnad för ungdomar</h3>
+                <p>Vårt arbete ger resultat. Varje år tilldelar vi cirka <strong>40 000 kronor</strong> till unga talanger inom Hammarbyfamiljen. Bidrag och stipendier delas ut regelbundet till både enskilda ungdomar och lag – för att säkerställa att nästa generations stjärnor får det stöd de behöver.</p>
+            </div>
+            <div class="story-section">
+                <h3>En stark gemenskap</h3>
+                <p>Vi samlas månatligen för att diskutera aktuella frågor och driva vår verksamhet framåt. Allt vi gör vilar på <strong>ideell grund</strong> – varje medlem lägger sin fritid för att göra skillnad. När du blir medlem blir du en del av något större än dig själv.</p>
+            </div>
         </div>
     </div>
 </section>

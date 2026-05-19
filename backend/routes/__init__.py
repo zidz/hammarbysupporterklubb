@@ -96,6 +96,23 @@ def load_news_from_file(filepath):
     except (json.JSONDecodeError, IOError):
         return None
 
+def load_latest_news(n):
+    """Load the N most recent news items."""
+    news_dir = os.path.join(os.path.dirname(__file__), '..', 'data', 'news')
+    news_items = []
+
+    if os.path.exists(news_dir):
+        for filename in sorted(os.listdir(news_dir), reverse=True):
+            if filename.endswith('.json') and filename.startswith('nyhet_'):
+                filepath = os.path.join(news_dir, filename)
+                news_data = load_news_from_file(filepath)
+                if news_data:
+                    news_items.append(news_data)
+
+    news_items.sort(key=lambda x: x.get('created_at', ''), reverse=True)
+    return news_items[:n]
+
+
 def get_news_by_id(news_id):
     """Find news by ID."""
     news_dir = os.path.join(os.path.dirname(__file__), '..', 'data', 'news')
@@ -178,33 +195,22 @@ def dashboard():
 @bp.route('/')
 def index():
     """Home page."""
-    return render_template('index.html')
+    latest_news = load_latest_news(3)
+    return render_template('index.html', latest_news=latest_news)
 
 @bp.route('/nyheter')
 def news_list():
     """Paginated news list."""
     page = request.args.get('page', 1, type=int)
     per_page = 3
-    
-    news_dir = os.path.join(os.path.dirname(__file__), '..', 'data', 'news')
-    news_items = []
-    
-    if os.path.exists(news_dir):
-        for filename in sorted(os.listdir(news_dir), reverse=True):
-            if filename.endswith('.json') and filename.startswith('nyhet_'):
-                filepath = os.path.join(news_dir, filename)
-                news_data = load_news_from_file(filepath)
-                if news_data:
-                    news_items.append(news_data)
-    
-    # Sort by created_at descending (newest first)
-    news_items.sort(key=lambda x: x.get('created_at', ''), reverse=True)
-    
+
+    news_items = load_latest_news(9999)
+
     start = (page - 1) * per_page
     end = start + per_page
     paginated_news = news_items[start:end]
     total_pages = (len(news_items) + per_page - 1) // per_page
-    
+
     return render_template(
         'nyheter.html',
         news=paginated_news,
