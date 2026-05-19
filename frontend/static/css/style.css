@@ -456,7 +456,6 @@ body {
 }
 
 .news-detail {
-    max-width: 800px;
     margin: 0 auto;
     background: var(--hammarby-white);
     border-radius: 12px;
@@ -476,14 +475,13 @@ body {
 
 .news-detail-image {
     width: 100%;
-    max-height: 500px;
     overflow: hidden;
 }
 
 .news-detail-image img {
     width: 100%;
-    height: 100%;
-    object-fit: cover;
+    height: auto;
+    display: block;
 }
 
 .news-detail-content {
