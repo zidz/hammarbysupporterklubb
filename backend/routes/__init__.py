@@ -582,3 +582,68 @@ def delete_image(image_id):
     
     flash('Image not found.', 'error')
     return redirect(url_for('main.dashboard'))
+
+
+@bp.route('/admin/news/upload-image', methods=['POST'])
+@login_required
+@admin_required
+def upload_inline_image():
+    """Upload image for inline insertion in Quill editor. Returns JSON."""
+    from PIL import Image
+
+    if 'image' not in request.files:
+        return jsonify({"error": "No file provided"}), 400
+
+    file = request.files['image']
+
+    if not file.filename:
+        return jsonify({"error": "No file selected"}), 400
+
+    filename = file.filename
+    ext = filename.rsplit('.', 1)[1].lower() if '.' in filename else ''
+
+    allowed_extensions = {'jpg', 'jpeg', 'png', 'gif', 'webp'}
+    if ext not in allowed_extensions:
+        return jsonify({"error": "Invalid file type"}), 400
+
+    file.seek(0, 2)
+    file_size = file.tell()
+    file.seek(0)
+
+    if file_size > 16 * 1024 * 1024:
+        return jsonify({"error": "File too large (max 16MB)"}), 400
+
+    try:
+        img = Image.open(file)
+        img.load()
+        file.seek(0)
+    except Exception:
+        return jsonify({"error": "Invalid image file"}), 400
+
+    try:
+        if img.mode in ('RGBA', 'P'):
+            background = Image.new('RGB', img.size, (255, 255, 255))
+            if img.mode == 'P':
+                img = img.convert('RGBA')
+            background.paste(img, mask=img.split()[-1] if img.mode == 'RGBA' else None)
+            img = background
+        elif img.mode != 'RGB':
+            img = img.convert('RGB')
+
+        if img.width > 1920 or img.height > 1080:
+            img.thumbnail((1920, 1080), Image.Resampling.LANCZOS)
+
+        unique_id = str(uuid.uuid4())
+        safe_filename = secure_filename(filename.rsplit('.', 1)[0] if '.' in filename else 'image')
+        new_filename = f"{safe_filename}_{unique_id}.jpg"
+
+        upload_dir = current_app.config['UPLOAD_FOLDER']
+        os.makedirs(upload_dir, exist_ok=True)
+        filepath = os.path.join(upload_dir, new_filename)
+
+        img.save(filepath, 'JPEG', quality=85, optimize=True)
+
+        return jsonify({"url": f"/static/uploads/{new_filename}"})
+
+    except Exception as e:
+        return jsonify({"error": f"Processing failed: {str(e)}"}), 500

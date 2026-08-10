@@ -497,6 +497,30 @@ body {
     margin: 1rem 0;
 }
 
+.news-img-full {
+    width: 100%;
+    height: auto;
+    display: block;
+    margin: 1rem 0;
+    border-radius: 6px;
+}
+
+.news-img-half {
+    width: 50%;
+    height: auto;
+    display: block;
+    margin: 1rem auto;
+    border-radius: 6px;
+}
+
+.news-img-third {
+    width: 33%;
+    height: auto;
+    display: block;
+    margin: 1rem auto;
+    border-radius: 6px;
+}
+
 .news-detail-footer {
     padding: 1.5rem 2rem;
     border-top: 1px solid #eee;

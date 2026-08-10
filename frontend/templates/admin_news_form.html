@@ -15,6 +15,12 @@
         min-height: 250px;
         font-size: 1rem;
     }
+    .editor-container .ql-editor img {
+        max-width: 100%;
+        height: auto;
+        margin: 0.5rem 0;
+        border-radius: 4px;
+    }
     .editor-container .ql-toolbar {
         background: #f9f9f9;
     }
@@ -58,6 +64,12 @@
     .image-preview .remove-image:hover {
         text-decoration: underline;
     }
+    #inline-image-input {
+        display: none;
+    }
+    .ql-image-btn {
+        cursor: pointer;
+    }
 </style>
 {% endblock %}
 
@@ -80,6 +92,7 @@
 
         <div class="form-group">
             <label>Innehåll *</label>
+            <input type="file" id="inline-image-input" accept="image/jpeg,image/jpg,image/png,image/gif,image/webp">
             <div class="editor-container">
                 <div id="editor"></div>
             </div>
@@ -126,20 +139,77 @@ document.addEventListener('DOMContentLoaded', function() {
     var quill = new Quill('#editor', {
         theme: 'snow',
         modules: {
-            toolbar: [
-                ['bold', 'italic', 'underline'],
-                [{'header': [1, 2, 3, false]}],
-                [{'list': 'ordered'}, {'list': 'bullet'}],
-                [{'align': []}],
-                ['link'],
-                ['clean']
-            ]
+            toolbar: {
+                container: [
+                    ['bold', 'italic', 'underline'],
+                    [{'header': [1, 2, 3, false]}],
+                    [{'list': 'ordered'}, {'list': 'bullet'}],
+                    [{'align': []}],
+                    ['link'],
+                    ['image'],
+                    ['clean']
+                ],
+                handlers: {
+                    image: function() {
+                        document.getElementById('inline-image-input').click();
+                    }
+                }
+            }
         }
     });
 
 {% if news and news.content %}
     quill.clipboard.dangerouslyPasteHTML({{ news.content|tojson }});
 {% endif %}
+
+    var inlineImageInput = document.getElementById('inline-image-input');
+    inlineImageInput.addEventListener('change', function(e) {
+        var file = e.target.files[0];
+        if (!file) return;
+
+        var formData = new FormData();
+        formData.append('image', file);
+
+        var csrfToken = document.querySelector('input[name="csrf_token"]').value;
+
+        fetch('/admin/news/upload-image', {
+            method: 'POST',
+            headers: { 'X-CSRFToken': csrfToken },
+            body: formData
+        })
+        .then(function(response) { return response.json(); })
+        .then(function(data) {
+            if (data.error) {
+                alert('Fel vid uppladdning: ' + data.error);
+                return;
+            }
+            var size = prompt('Välj bildstorlek:\n1 = Full bredd\n2 = Halv bredd\n3 = Tredjedel', '1');
+            if (size === null) return;
+            size = size.trim();
+            var sizeClass;
+            if (size === '2') {
+                sizeClass = 'news-img-half';
+            } else if (size === '3') {
+                sizeClass = 'news-img-third';
+            } else {
+                sizeClass = 'news-img-full';
+            }
+            var range = quill.getSelection();
+            var index = range ? range.index : quill.getLength();
+            quill.insertEmbed(index, 'image', data.url);
+            var newlineIndex = index + 1;
+            quill.insertText(newlineIndex, '\n');
+            var imgBlot = quill.getEmbed(index);
+            if (imgBlot) {
+                imgBlot.domNode.className = sizeClass;
+            }
+            inlineImageInput.value = '';
+        })
+        .catch(function(err) {
+            alert('Fel vid uppladdning av bild.');
+            console.error(err);
+        });
+    });
 
     document.querySelector('.news-form').addEventListener('submit', function(e) {
         document.getElementById('content').value = quill.root.innerHTML;
