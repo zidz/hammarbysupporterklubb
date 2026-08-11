@@ -348,7 +348,7 @@ Type=simple
 WorkingDirectory=${SCRIPT_DIR}
 Environment="PATH=${VENV_DIR}/bin:${PATH}"
 Environment="PYTHONPATH=${SCRIPT_DIR}"
-Environment="PORT=5000"
+Environment="PORT=5050"
 ExecStart=${VENV_DIR}/bin/python ${SCRIPT_DIR}/backend/app.py
 Restart=on-failure
 RestartSec=10
@@ -393,7 +393,7 @@ start_server() {
     fi
 
     export PYTHONPATH="${SCRIPT_DIR}:${PYTHONPATH}"
-    export PORT="${PORT:-5000}"
+    export PORT="${PORT:-5050}"
 
     # Start server in background
     nohup "${VENV_DIR}/bin/python" "${SCRIPT_DIR}/backend/app.py" > "/tmp/hammarby-flask.log" 2>&1 &
@@ -401,7 +401,7 @@ start_server() {
     echo $SERVER_PID > "${SCRIPT_DIR}/.server.pid"
 
     log_success "Flask server started (PID: $SERVER_PID)"
-    log_info "Server running at: http://localhost:${PORT:-5000}"
+    log_info "Server running at: http://localhost:${PORT:-5050}"
     log_info "Logs: /tmp/hammarby-flask.log"
     log_info "Stop the server with: ./stop.sh"
 
@@ -409,7 +409,7 @@ start_server() {
     sleep 3
 
     # Check if server is running
-    if curl -s "http://localhost:${PORT:-5000}" > /dev/null 2>&1; then
+    if curl -s "http://localhost:${PORT:-5050}" > /dev/null 2>&1; then
         log_success "Server is running and responding"
     else
         log_warning "Server may not be responding yet. Check logs:"
@@ -561,7 +561,7 @@ main() {
     echo "  1. Review and customize .env file"
     echo "  2. Start dev server: ./start.sh --demo"
     echo "  3. Or start systemd: systemctl --user start hammarby-website"
-    echo "  4. Access: http://localhost:5000"
+    echo "  4. Access: http://localhost:5050"
     echo ""
 
     # Start server in demo mode

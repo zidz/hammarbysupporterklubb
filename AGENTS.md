@@ -14,7 +14,7 @@ sudo ./start.sh --init     # System packages (requires root)
 ./venv/bin/python -m pytest --cov=backend --cov-report=term-missing
 
 # Start dev server
-./start.sh --demo          # Background, port 5000
+./start.sh --demo          # Background, port 5050
 ./restart.sh               # Background, port 5001
 ./restart.sh --foreground  # Foreground, port 5001
 
@@ -41,7 +41,7 @@ systemctl --user start hammarby-website  # Start
 | Run single test | `./venv/bin/python -m pytest tests/test_pages.py::TestHomePage::test_home_page_loads -v` |
 | Run failed tests only | `./venv/bin/python -m pytest --lf` |
 | Coverage report | `./venv/bin/python -m pytest --cov=backend --cov-report=html` |
-| Start dev server | `./start.sh --demo` (port 5000) or `./restart.sh` (port 5001) |
+| Start dev server | `./start.sh --demo` (port 5050) or `./restart.sh` (port 5001) |
 | Production (systemd) | `./start.sh --systemd` then `systemctl --user start hammarby-website` |
 | Stop server | `./stop.sh` |
 
@@ -87,7 +87,7 @@ Set in `.env` (created by `./start.sh`):
 - `SECRET_KEY` - **Must change in production**
 - `FLASK_ENV` - `development` or `production`
 - `FLASK_DEBUG` - `1` or `0`
-- `PORT` - Default `5000`
+- `PORT` - Default `5050`
 
 ## HAProxy/Proxy
 
