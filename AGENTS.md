@@ -61,6 +61,19 @@ systemctl --user start hammarby-website  # Start
 - Passwords hashed with bcrypt in `User` model
 - User data stored in `backend/data/users.json`
 
+## User Management
+
+CLI tool: `./venv/bin/python user_manager.py`
+
+| Task | Command |
+|------|---------|
+| List users | `./venv/bin/python user_manager.py list` |
+| Add user | `./venv/bin/python user_manager.py add -u name -e email --password pass --role admin` |
+| Remove user | `./venv/bin/python user_manager.py remove --id 1 --force` |
+| Edit username | `./venv/bin/python user_manager.py edit --id 1 --username newname` |
+| Edit email | `./venv/bin/python user_manager.py edit --id 1 --email new@example.com` |
+| Edit password | `./venv/bin/python user_manager.py edit --id 1 --password NewPass123` |
+
 ## News System
 
 - News files: `backend/data/news/nyhet_XXXX.json` (zero-padded 4-digit IDs)
