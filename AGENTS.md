@@ -3,17 +3,24 @@
 ## Quick Start
 
 ```bash
-# Setup (auto-creates venv, installs deps, configures env)
-./start.sh
+# First-time setup (2 steps):
+sudo ./start.sh --init     # System packages (requires root)
+./start.sh                 # Venv + pip packages (regular user)
 
 # Run tests
-pytest -v
+./venv/bin/python -m pytest -v
 
 # Run with coverage
-pytest --cov=backend --cov-report=term-missing
+./venv/bin/python -m pytest --cov=backend --cov-report=term-missing
 
 # Start dev server
-source venv/bin/activate && python backend/app.py
+./start.sh --demo          # Background, port 5000
+./restart.sh               # Background, port 5001
+./restart.sh --foreground  # Foreground, port 5001
+
+# Production (systemd user service):
+./start.sh --systemd                  # Install service
+systemctl --user start hammarby-website  # Start
 ```
 
 ## Architecture
@@ -29,13 +36,13 @@ source venv/bin/activate && python backend/app.py
 
 | Task | Command |
 |------|---------|
-| Run all tests | `pytest -v` |
-| Run single test file | `pytest tests/test_authentication.py -v` |
-| Run single test | `pytest tests/test_pages.py::TestHomePage::test_home_page_loads -v` |
-| Run failed tests only | `pytest --lf` |
-| Coverage report | `pytest --cov=backend --cov-report=html` |
-| Start dev server | `python backend/app.py` |
-| Production server | `gunicorn --bind 0.0.0.0:5000 --workers 4 backend.app:create_app()` |
+| Run all tests | `./venv/bin/python -m pytest -v` |
+| Run single test file | `./venv/bin/python -m pytest tests/test_authentication.py -v` |
+| Run single test | `./venv/bin/python -m pytest tests/test_pages.py::TestHomePage::test_home_page_loads -v` |
+| Run failed tests only | `./venv/bin/python -m pytest --lf` |
+| Coverage report | `./venv/bin/python -m pytest --cov=backend --cov-report=html` |
+| Start dev server | `./start.sh --demo` (port 5000) or `./restart.sh` (port 5001) |
+| Production (systemd) | `./start.sh --systemd` then `systemctl --user start hammarby-website` |
 | Stop server | `./stop.sh` |
 
 ## Testing Notes
