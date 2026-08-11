@@ -222,7 +222,7 @@ MAX_CONTENT_LENGTH=104857600  # 100MB in bytes
 
 # Server Configuration
 HOST=0.0.0.0
-PORT=5000
+PORT=5050
 
 # HAProxy/Proxy Configuration
 PROXY_FIX=True
