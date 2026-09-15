@@ -136,6 +136,51 @@ class TestMembershipPage:
         response = client.get('/medlem', follow_redirects=True)
         
         assert response.status_code == 200
+    
+    def test_membership_page_displays_all_membership_types(self, client):
+        """Test membership page displays all four membership types."""
+        response = client.get('/medlem', follow_redirects=True)
+        
+        assert response.status_code == 200
+        response_text = response.data.decode('utf-8', errors='ignore')
+        assert 'Juniormedlemskap' in response_text
+        assert 'Ordinarie medlemskap' in response_text
+        assert 'Seniormedlemskap' in response_text
+        assert 'Studerande' in response_text
+    
+    def test_membership_page_removed_old_cards_and_payment_section(self, client):
+        """Test old cards, payment section and removed content are gone."""
+        response = client.get('/medlem', follow_redirects=True)
+        
+        assert response.status_code == 200
+        response_text = response.data.decode('utf-8', errors='ignore')
+        assert 'Ungdom/Pensionär' not in response_text
+        assert 'Betalning' not in response_text
+        assert 'swish-qr-placeholder' not in response_text
+        assert 'swish-qr-junior' not in response_text
+        assert 'Medlemsförmåner' not in response_text
+        assert 'Du anmäler dig, betalar' not in response_text
+        assert 'Swish: 123 456' not in response_text
+    
+    def test_membership_page_references_swish_qr_codes(self, client):
+        """Test each card references the correct Swish QR code."""
+        response = client.get('/medlem', follow_redirects=True)
+        
+        assert response.status_code == 200
+        response_text = response.data.decode('utf-8', errors='ignore')
+        assert 'swish-QR-small-100.png' in response_text
+        assert 'swish-QR-small-150.png' in response_text
+        assert 'swish-QR-small-250.png' in response_text
+    
+    def test_membership_page_has_qr_modal(self, client):
+        """Test membership page has QR modal for payment."""
+        response = client.get('/medlem', follow_redirects=True)
+        
+        assert response.status_code == 200
+        response_text = response.data.decode('utf-8', errors='ignore')
+        assert 'qr-modal' in response_text
+        assert 'Skanna QR-koden, swisha och bli medlem.' in response_text
+        assert 'Glöm inte att ange din e-postadress i meddelandefältet.' in response_text
 
 
 class TestAdminLoginPage:

@@ -977,18 +977,9 @@ body {
     transition: var(--transition);
 }
 
-.pricing-card.featured {
-    border: 3px solid var(--hammarby-green);
-    transform: scale(1.05);
-}
-
 .pricing-card:hover {
     transform: translateY(-4px);
     box-shadow: var(--shadow-hover);
-}
-
-.pricing-card.featured:hover {
-    transform: scale(1.05) translateY(-4px);
 }
 
 .pricing-card h3 {
@@ -1000,31 +991,93 @@ body {
     font-size: 2.5rem;
     font-weight: 700;
     color: var(--hammarby-green);
+    margin-bottom: 0.25rem;
+}
+
+.renewal-note {
+    font-size: 0.9rem;
+    color: #666;
     margin-bottom: 1.5rem;
 }
 
-.pricing-card ul {
-    list-style: none;
-    margin-bottom: 2rem;
-    text-align: left;
+/* QR Modal */
+.qr-modal-overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.6);
+    z-index: 1000;
+    justify-content: center;
+    align-items: center;
+    padding: 1rem;
 }
 
-.pricing-card li {
-    padding: 0.5rem 0;
-    border-bottom: 1px solid #eee;
+.qr-modal-overlay.open {
+    display: flex;
+}
+
+.qr-modal {
+    position: relative;
+    background: var(--hammarby-white);
+    border-radius: 12px;
+    box-shadow: var(--shadow-hover);
+    padding: 2.5rem 2rem 2rem;
+    max-width: 420px;
+    width: 100%;
+    text-align: center;
+}
+
+.qr-modal-close {
+    position: absolute;
+    top: 0.5rem;
+    right: 0.75rem;
+    background: none;
+    border: none;
+    font-size: 1.75rem;
+    line-height: 1;
+    color: #666;
+    cursor: pointer;
+}
+
+.qr-modal-close:hover {
+    color: #000;
+}
+
+.qr-modal h2 {
+    color: var(--hammarby-green);
+    margin-bottom: 0.25rem;
+}
+
+.qr-modal-price {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--hammarby-green);
+    margin-bottom: 1rem;
+}
+
+.qr-modal-prompt {
+    margin-bottom: 1.5rem;
+    color: #444;
+}
+
+.qr-instruction {
+    font-size: 1rem;
+    font-weight: 600;
+    color: #1f561c;
+    background: #e8f5ee;
+    padding: 0.75rem 1rem;
+    border-radius: 8px;
+    margin-bottom: 1.5rem;
 }
 
 /* QR Code */
-.swish-qr {
-    text-align: center;
-    margin: 2rem 0;
-}
-
 .qr-code {
-    width: 200px;
-    height: 200px;
-    border: 2px solid #ddd;
-    border-radius: 8px;
+    max-width: 260px;
+    width: 100%;
+    height: auto;
     margin-bottom: 1rem;
 }
 

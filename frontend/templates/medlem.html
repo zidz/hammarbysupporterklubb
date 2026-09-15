@@ -10,50 +10,87 @@
         
         <div class="pricing-grid">
             <div class="pricing-card">
-                <h3>Ungdom/Pensionär</h3>
-                <p class="price">100 kr/år</p>
-                <ul>
-                    <li>Tillgång till alla evenemang</li>
-                    <li>Nyhetsbrev</li>
-                    <li>Medlemsförmåner</li>
-                </ul>
-                <a href="mailto:medlem@hammarby.se?subject=Medlemsansökan Ungdom/Pensionär" class="btn btn-primary">Bli Medlem</a>
+                <h3>Juniormedlemskap</h3>
+                <p class="price">100 kr</p>
+                <p class="renewal-note">Förnyas efter ett år.</p>
+                <button type="button" class="btn btn-primary membership-btn" data-membership="Juniormedlemskap" data-price="100 kr" data-qr="{{ url_for('static', filename='images/swish-QR-small-100.png') }}">Bli Medlem</button>
             </div>
-            
-            <div class="pricing-card featured">
-                <h3>Senior</h3>
-                <p class="price">250 kr/år</p>
-                <ul>
-                    <li>Tillgång till alla evenemang</li>
-                    <li>Nyhetsbrev</li>
-                    <li>Medlemsförmåner</li>
-                    <li>Prioriterad support</li>
-                    <li>Exklusiva förmåner</li>
-                </ul>
-                <a href="mailto:medlem@hammarby.se?subject=Medlemsansökan Senior" class="btn btn-primary">Bli Medlem</a>
+
+            <div class="pricing-card">
+                <h3>Ordinarie medlemskap</h3>
+                <p class="price">250 kr</p>
+                <p class="renewal-note">Förnyas efter ett år.</p>
+                <button type="button" class="btn btn-primary membership-btn" data-membership="Ordinarie medlemskap" data-price="250 kr" data-qr="{{ url_for('static', filename='images/swish-QR-small-250.png') }}">Bli Medlem</button>
             </div>
-        </div>
-        
-        <div class="payment-info">
-            <h2>Betalning</h2>
-            <p>Betalning sker enkelt via Swish. Skanna QR-koden nedan eller använd nummer 123456.</p>
-            
-            <div class="swish-qr">
-                <img src="{{ url_for('static', filename='images/swish-qr-placeholder.png') }}" alt="Swish QR-kod" class="qr-code">
-                <p>Swish: 123 456</p>
+
+            <div class="pricing-card">
+                <h3>Seniormedlemskap</h3>
+                <p class="price">150 kr</p>
+                <p class="renewal-note">Förnyas efter ett år.</p>
+                <button type="button" class="btn btn-primary membership-btn" data-membership="Seniormedlemskap" data-price="150 kr" data-qr="{{ url_for('static', filename='images/swish-QR-small-150.png') }}">Bli Medlem</button>
             </div>
-        </div>
-        
-        <div class="membership-benefits">
-            <h2>Medlemsförmåner</h2>
-            <ul>
-                <li>📰 Exklusiva nyheter och uppdateringar</li>
-                <li>🎟️ Rabatt på evenemangsbiljetter</li>
-                <li>👕 Rabatt på supporterutrustning</li>
-                <li>🤝 Möjlighet att delta i klubbens aktiviteter</li>
-                <li>📧 Månadsvis nyhetsbrev</li>
-            </ul>
+
+            <div class="pricing-card">
+                <h3>Studerande</h3>
+                <p class="price">150 kr</p>
+                <p class="renewal-note">Förnyas efter ett år.</p>
+                <button type="button" class="btn btn-primary membership-btn" data-membership="Studerande" data-price="150 kr" data-qr="{{ url_for('static', filename='images/swish-QR-small-150.png') }}">Bli Medlem</button>
+            </div>
         </div>
     </div>
 </section>
+
+<div class="qr-modal-overlay" id="qr-modal">
+    <div class="qr-modal" role="dialog" aria-modal="true" aria-labelledby="qr-modal-title">
+        <button type="button" class="qr-modal-close" aria-label="Stäng">&times;</button>
+        <h2 id="qr-modal-title"></h2>
+        <p class="qr-modal-price" id="qr-modal-price"></p>
+        <p class="qr-modal-prompt">Skanna QR-koden, swisha och bli medlem.</p>
+        <p class="qr-instruction">Glöm inte att ange din e-postadress i meddelandefältet.</p>
+        <img id="qr-modal-image" src="" alt="Swish QR-kod" class="qr-code">
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    (function() {
+        const modal = document.getElementById('qr-modal');
+        const title = document.getElementById('qr-modal-title');
+        const price = document.getElementById('qr-modal-price');
+        const image = document.getElementById('qr-modal-image');
+
+        function openModal(button) {
+            title.textContent = button.dataset.membership;
+            price.textContent = button.dataset.price;
+            image.src = button.dataset.qr;
+            image.alt = 'Swish QR-kod ' + button.dataset.membership;
+            modal.classList.add('open');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeModal() {
+            modal.classList.remove('open');
+            document.body.style.overflow = '';
+        }
+
+        document.querySelectorAll('.membership-btn').forEach(function(button) {
+            button.addEventListener('click', function() {
+                openModal(this);
+            });
+        });
+
+        modal.querySelector('.qr-modal-close').addEventListener('click', closeModal);
+        modal.addEventListener('click', function(event) {
+            if (event.target === this) {
+                closeModal();
+            }
+        });
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Escape') {
+                closeModal();
+            }
+        });
+    })();
+</script>
 {% endblock %}
