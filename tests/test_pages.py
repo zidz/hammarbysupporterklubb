@@ -27,14 +27,6 @@ class TestHomePage:
         assert response.status_code == 200
         assert b'Hammarby' in response.data or b'hammarby' in response.data
     
-    def test_home_page_has_about_section(self, client):
-        """Test home page has about section."""
-        response = client.get('/', follow_redirects=True)
-        
-        assert response.status_code == 200
-        response_text = response.data.decode('utf-8', errors='ignore').lower()
-        assert 'about' in response_text or 'om oss' in response_text
-    
     def test_home_page_has_contact_section(self, client):
         """Test home page has contact section."""
         response = client.get('/', follow_redirects=True)

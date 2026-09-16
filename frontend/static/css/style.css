@@ -129,7 +129,6 @@ body {
     align-items: center;
     justify-content: center;
     position: relative;
-    overflow: hidden;
 }
 
 .hero-overlay {
@@ -139,6 +138,7 @@ body {
     right: 0;
     bottom: 0;
     background: rgba(0, 0, 0, 0.3);
+    pointer-events: none;
 }
 
 .hero-content {
