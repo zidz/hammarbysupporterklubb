@@ -440,7 +440,7 @@ body {
 }
 
 .news-body p {
-    margin-bottom: 1rem;
+    margin: 0;
 }
 
 .no-news {
@@ -488,6 +488,10 @@ body {
     padding: 1.5rem 2rem 2rem;
     line-height: 1.8;
     color: var(--text-dark);
+}
+
+.news-detail-content p {
+    margin: 0;
 }
 
 .news-detail-content img {

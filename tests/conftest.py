@@ -8,10 +8,16 @@ from PIL import Image
 
 
 @pytest.fixture(scope='function')
-def app():
+def app(tmp_path, monkeypatch):
     """Create and configure a test application instance."""
     from backend.app import create_app
-    
+    from backend import routes
+
+    # Keep tests away from the real news data directory
+    test_news_dir = tmp_path / 'news'
+    test_news_dir.mkdir()
+    monkeypatch.setattr(routes, 'NEWS_DIR', str(test_news_dir))
+
     # Create test app with test configuration
     app = create_app()
     app.config.update({

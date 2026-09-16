@@ -36,6 +36,14 @@ class TestAppCreation:
         import os
         assert os.path.exists(app.config['UPLOAD_FOLDER'])
 
+    def test_upload_folder_is_served_by_static_handler(self):
+        """Test uploaded files are reachable via /static/uploads/... URLs."""
+        import os
+        app = create_app()
+        static_folder = os.path.abspath(app.static_folder)
+        upload_folder = os.path.abspath(app.config['UPLOAD_FOLDER'])
+        assert upload_folder.startswith(static_folder + os.sep)
+
 
 class TestProxyFix:
     """Test ProxyFix middleware configuration for HAProxy."""

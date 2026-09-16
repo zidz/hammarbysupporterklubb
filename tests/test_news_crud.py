@@ -214,3 +214,56 @@ class TestNewsValidation:
         assert response.status_code == 200
         response_text = response.data.decode('utf-8', errors='ignore').lower()
         assert 'invalid' in response_text
+
+
+class TestNewsDisplay:
+    """Test rendering of public news pages."""
+    
+    def test_news_detail_renders_content_unmodified(self, admin_client):
+        """News content must render verbatim - empty paragraphs are deliberate section breaks."""
+        from backend.routes import load_latest_news
+
+        existing_ids = [n.get('id') for n in load_latest_news(9999)]
+        new_id = max(existing_ids, default=0) + 1
+
+        content = '<p>First line</p><p><br></p><p>Last line</p>'
+        response = admin_client.post('/admin/news/create', data={
+            'title': 'Verbatim rendering test',
+            'content': content
+        }, follow_redirects=True)
+        assert response.status_code == 200
+
+        try:
+            detail = admin_client.get(f'/nyheter/{new_id}')
+            assert detail.status_code == 200
+            detail_text = detail.data.decode('utf-8', errors='ignore')
+            content_html = detail_text.split('news-detail-content', 1)[1].split('</div>', 1)[0]
+            assert 'First line' in content_html
+            assert 'Last line' in content_html
+            assert '<p><br></p>' in content_html
+        finally:
+            admin_client.post(f'/admin/news/{new_id}/delete', follow_redirects=True)
+
+    def test_news_list_renders_content_unmodified(self, admin_client):
+        """News list content must render verbatim - empty paragraphs are deliberate section breaks."""
+        from backend.routes import load_latest_news
+
+        existing_ids = [n.get('id') for n in load_latest_news(9999)]
+        new_id = max(existing_ids, default=0) + 1
+
+        content = '<p>First line</p><p><br></p><p>Last line</p>'
+        response = admin_client.post('/admin/news/create', data={
+            'title': 'Verbatim list rendering test',
+            'content': content
+        }, follow_redirects=True)
+        assert response.status_code == 200
+
+        try:
+            listing = admin_client.get('/nyheter')
+            assert listing.status_code == 200
+            listing_text = listing.data.decode('utf-8', errors='ignore')
+            assert 'First line' in listing_text
+            assert 'Last line' in listing_text
+            assert '<p><br></p>' in listing_text
+        finally:
+            admin_client.post(f'/admin/news/{new_id}/delete', follow_redirects=True)

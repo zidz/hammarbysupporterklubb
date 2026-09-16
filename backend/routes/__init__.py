@@ -13,6 +13,8 @@ from backend.models import User
 # Create blueprint
 bp = Blueprint('main', __name__)
 
+NEWS_DIR = os.path.join(os.path.dirname(__file__), '..', 'data', 'news')
+
 # Initialize Flask-Login
 login_manager = LoginManager()
 login_manager.login_view = 'main.login'
@@ -98,7 +100,7 @@ def load_news_from_file(filepath):
 
 def load_latest_news(n):
     """Load the N most recent news items."""
-    news_dir = os.path.join(os.path.dirname(__file__), '..', 'data', 'news')
+    news_dir = NEWS_DIR
     news_items = []
 
     if os.path.exists(news_dir):
@@ -115,7 +117,7 @@ def load_latest_news(n):
 
 def get_news_by_id(news_id):
     """Find news by ID."""
-    news_dir = os.path.join(os.path.dirname(__file__), '..', 'data', 'news')
+    news_dir = NEWS_DIR
     
     if not os.path.exists(news_dir):
         return None
@@ -176,7 +178,7 @@ def logout():
 @admin_required
 def dashboard():
     """Admin dashboard for news management."""
-    news_dir = os.path.join(os.path.dirname(__file__), '..', 'data', 'news')
+    news_dir = NEWS_DIR
     news_list = []
     
     if os.path.exists(news_dir):
@@ -323,7 +325,7 @@ def create_news():
                 except Exception:
                     flash('Error processing image.', 'error')
         
-        news_dir = os.path.join(os.path.dirname(__file__), '..', 'data', 'news')
+        news_dir = NEWS_DIR
         existing_ids = []
         
         if os.path.exists(news_dir):
@@ -440,7 +442,7 @@ def edit_news(news_id):
         elif 'image' in news_data:
             del news_data['image']
         
-        news_dir = os.path.join(os.path.dirname(__file__), '..', 'data', 'news')
+        news_dir = NEWS_DIR
         filepath = os.path.join(news_dir, f"nyhet_{news_id:04d}.json")
         with open(filepath, 'w') as f:
             json.dump(news_data, f, indent=2, ensure_ascii=False)
@@ -461,7 +463,7 @@ def delete_news(news_id):
         flash('News not found.', 'error')
         return redirect(url_for('main.dashboard'))
     
-    news_dir = os.path.join(os.path.dirname(__file__), '..', 'data', 'news')
+    news_dir = NEWS_DIR
     
     for filename in os.listdir(news_dir):
         if filename.endswith('.json') and filename.startswith('nyhet_'):
