@@ -174,18 +174,29 @@ class TestImageStorage:
         
         assert response.status_code == 200
     
-    def test_image_unique_filename_generated(self, admin_client, test_image):
+    def test_image_unique_filename_generated(self, app, admin_client):
         """Test unique filename is generated for uploaded image."""
+        def make_image():
+            img = Image.new('RGB', (100, 100), color='green')
+            img_io = BytesIO()
+            img.save(img_io, format='JPEG')
+            img_io.seek(0)
+            return (img_io, 'test_image.jpg')
+
         response1 = admin_client.post('/admin/news/upload', data={
-            'image': test_image['file']
-        })
-        
+            'image': make_image()
+        }, follow_redirects=True)
+
         response2 = admin_client.post('/admin/news/upload', data={
-            'image': test_image['file']
-        })
-        
+            'image': make_image()
+        }, follow_redirects=True)
+
         assert response1.status_code == 200
         assert response2.status_code == 200
+
+        uploaded = [f for f in os.listdir(app.config['UPLOAD_FOLDER']) if f.startswith('test_image_')]
+        assert len(uploaded) == 2
+        assert len(set(uploaded)) == 2
 
 
 class TestImageDelete:
