@@ -60,8 +60,6 @@ Thumbs.db
 # Uploads
 backend/uploads/*
 !backend/uploads/.gitkeep
-frontend/static/uploads/*
-!frontend/static/uploads/.gitkeep
 
 # Database
 *.db
