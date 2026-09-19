@@ -48,6 +48,10 @@
         <p class="qr-modal-prompt">Skanna QR-koden, swisha och bli medlem.</p>
         <p class="qr-instruction">Glöm inte att ange din e-postadress i meddelandefältet.</p>
         <img id="qr-modal-image" src="" alt="Swish QR-kod" class="qr-code">
+        <div id="qr-swish-section" hidden>
+            <button type="button" class="btn qr-swish-btn" id="qr-swish-btn">Öppna Swish</button>
+            <p class="qr-swish-note">Obs! Om du använder knappen ovan måste du själv fylla i beloppet och din e-postadress i meddelandefältet i Swish.</p>
+        </div>
     </div>
 </div>
 {% endblock %}
@@ -59,6 +63,20 @@
         const title = document.getElementById('qr-modal-title');
         const price = document.getElementById('qr-modal-price');
         const image = document.getElementById('qr-modal-image');
+        const swishSection = document.getElementById('qr-swish-section');
+        const swishButton = document.getElementById('qr-swish-btn');
+
+        const SWISH_URL = 'swish://swish?mobileaccount=1230339267';
+        const isMobile = /Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent) ||
+            (navigator.userAgentData && navigator.userAgentData.mobile);
+
+        if (isMobile) {
+            swishSection.hidden = false;
+        }
+
+        swishButton.addEventListener('click', function() {
+            window.location.href = SWISH_URL;
+        });
 
         function openModal(button) {
             title.textContent = button.dataset.membership;

@@ -1085,6 +1085,23 @@ body {
     margin-bottom: 1rem;
 }
 
+.qr-swish-btn {
+    display: block;
+    width: 100%;
+    background-color: #00B45A;
+    color: var(--hammarby-white);
+}
+
+.qr-swish-btn:hover {
+    background-color: #009A4C;
+}
+
+.qr-swish-note {
+    margin-top: 0.75rem;
+    font-size: 0.85rem;
+    color: var(--text-light);
+}
+
 /* Footer */
 .footer {
     background-color: var(--hammarby-green);
