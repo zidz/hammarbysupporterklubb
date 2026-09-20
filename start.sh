@@ -288,17 +288,25 @@ log_warning() {
 # Script directory
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
-log_info "Stopping Flask server..."
+# Service based on git branch (master = prod, anything else = dev)
+BRANCH=$(git -C "$SCRIPT_DIR" rev-parse --abbrev-ref HEAD 2>/dev/null || echo "")
+if [ "$BRANCH" = "master" ]; then
+    SERVICE_NAME="hammarby-website-prod.service"
+else
+    SERVICE_NAME="hammarby-website-dev.service"
+fi
+
+log_info "Stopping Flask server (mode: ${BRANCH:-dev})..."
 
 # Try stopping systemd user service
-if systemctl --user is-active hammarby-website.service &> /dev/null; then
-    log_info "Stopping systemd user service..."
-    systemctl --user stop hammarby-website.service
+if systemctl --user is-active "$SERVICE_NAME" &> /dev/null; then
+    log_info "Stopping systemd user service: $SERVICE_NAME"
+    systemctl --user stop "$SERVICE_NAME"
     log_success "Systemd service stopped"
 fi
 
-# Find and kill Flask processes
-PIDS=$(pgrep -f "python.*backend/app.py" 2>/dev/null || true)
+# Find and kill Flask processes started from this directory (not other clones)
+PIDS=$(pgrep -f "python.*${SCRIPT_DIR}/backend/app.py" 2>/dev/null || true)
 
 if [ -n "$PIDS" ]; then
     log_info "Found Flask processes: $PIDS"
@@ -306,7 +314,7 @@ if [ -n "$PIDS" ]; then
     sleep 2
 
     # Force kill if still running
-    PIDS=$(pgrep -f "python.*backend/app.py" 2>/dev/null || true)
+    PIDS=$(pgrep -f "python.*${SCRIPT_DIR}/backend/app.py" 2>/dev/null || true)
     if [ -n "$PIDS" ]; then
         log_warning "Force killing remaining processes..."
         kill -9 $PIDS 2>/dev/null || true
@@ -315,18 +323,6 @@ if [ -n "$PIDS" ]; then
     log_success "Flask server stopped"
 else
     log_info "No Flask server processes found"
-fi
-
-# Kill any process on port 5000
-log_info "Checking for processes on port 5000..."
-PORT_PROCESS=$(lsof -ti:5000 2>/dev/null || true)
-
-if [ -n "$PORT_PROCESS" ]; then
-    log_warning "Killing process on port 5000: $PORT_PROCESS"
-    kill -9 $PORT_PROCESS 2>/dev/null || true
-    log_success "Port 5000 freed"
-else
-    log_info "No processes found on port 5000"
 fi
 
 log_success "All servers stopped"
@@ -338,44 +334,54 @@ STOPEOF
 
 # ---- SYSTEMD SERVICE ----
 
-# Determine the systemd service port from the active git branch:
-#   master (prod) -> 5051
-#   anything else (dev, detached HEAD, non-git) -> 5050
-get_service_port() {
+# Determine the systemd service mode/name/port from the active git branch:
+#   master (prod) -> hammarby-website-prod.service, port 5051
+#   anything else (dev, detached HEAD, non-git) -> hammarby-website-dev.service, port 5050
+get_service_mode() {
     local script_dir="${1:-$SCRIPT_DIR}"
     local branch
     branch=$(git -C "$script_dir" rev-parse --abbrev-ref HEAD 2>/dev/null || echo "")
     if [ "$branch" = "master" ]; then
+        echo "prod"
+    else
+        echo "dev"
+    fi
+}
+
+get_service_port() {
+    local mode
+    mode=$(get_service_mode "${1:-$SCRIPT_DIR}")
+    if [ "$mode" = "prod" ]; then
         echo 5051
     else
         echo 5050
     fi
 }
 
+get_service_name() {
+    echo "hammarby-website-$(get_service_mode "${1:-$SCRIPT_DIR}").service"
+}
+
 # Create systemd user service file
 create_systemd_service() {
     log_info "Creating systemd user service..."
 
-    local service_name="hammarby-website.service"
     local user_service_dir="$HOME/.config/systemd/user"
     local current_user
     current_user=$(whoami)
-    local branch service_port
+    local branch mode service_name service_port
     branch=$(git -C "$SCRIPT_DIR" rev-parse --abbrev-ref HEAD 2>/dev/null || echo "")
+    mode=$(get_service_mode "$SCRIPT_DIR")
+    service_name=$(get_service_name "$SCRIPT_DIR")
     service_port=$(get_service_port "$SCRIPT_DIR")
-
-    if [ "$branch" = "master" ]; then
-        log_info "Mode: master (prod) — service port: ${service_port}"
-    else
-        log_info "Mode: dev — service port: ${service_port}"
-    fi
+    log_info "Mode: ${branch:-detached} (${mode}) — service: ${service_name} — port: ${service_port}"
 
     # Create systemd user directory if it doesn't exist
     mkdir -p "$user_service_dir"
 
     cat > "${user_service_dir}/${service_name}" << SVCEOF
 [Unit]
-Description=Hammarby Supporterklubb Website
+Description=Hammarby Supporterklubb Website (${mode})
 After=network.target
 
 [Service]
@@ -397,7 +403,7 @@ PrivateTmp=true
 # Logging
 StandardOutput=journal
 StandardError=journal
-SyslogIdentifier=hammarby-website
+SyslogIdentifier=hammarby-website-${mode}
 
 [Install]
 WantedBy=default.target
@@ -407,12 +413,12 @@ SVCEOF
     systemctl --user daemon-reload
 
     # Enable the service
-    systemctl --user enable hammarby-website.service
+    systemctl --user enable "$service_name"
 
     log_success "Systemd user service installed: ${service_name}"
-    log_info "Start with: systemctl --user start hammarby-website"
-    log_info "Status:      systemctl --user status hammarby-website"
-    log_info "Logs:        journalctl --user -u hammarby-website -f"
+    log_info "Start with: systemctl --user start hammarby-website-${mode}"
+    log_info "Status:      systemctl --user status hammarby-website-${mode}"
+    log_info "Logs:        journalctl --user -u hammarby-website-${mode} -f"
 }
 
 # ---- RUN SERVER ----
@@ -432,14 +438,15 @@ start_server() {
     export PYTHONPATH="${SCRIPT_DIR}:${PYTHONPATH}"
     export PORT="${PORT:-5050}"
 
-    # Start server in background
-    nohup "${VENV_DIR}/bin/python" "${SCRIPT_DIR}/backend/app.py" > "/tmp/hammarby-flask.log" 2>&1 &
+    # Start server in background (per-mode log file so dev+prod can share a server)
+    local log_file="/tmp/hammarby-flask-$(get_service_mode "$SCRIPT_DIR").log"
+    nohup "${VENV_DIR}/bin/python" "${SCRIPT_DIR}/backend/app.py" > "$log_file" 2>&1 &
     SERVER_PID=$!
     echo $SERVER_PID > "${SCRIPT_DIR}/.server.pid"
 
     log_success "Flask server started (PID: $SERVER_PID)"
     log_info "Server running at: http://localhost:${PORT:-5050}"
-    log_info "Logs: /tmp/hammarby-flask.log"
+    log_info "Logs: $log_file"
     log_info "Stop the server with: ./stop.sh"
 
     # Wait for server to start
@@ -450,7 +457,7 @@ start_server() {
         log_success "Server is running and responding"
     else
         log_warning "Server may not be responding yet. Check logs:"
-        log_warning "tail -f /tmp/hammarby-flask.log"
+        log_warning "tail -f $log_file"
     fi
 }
 
@@ -486,7 +493,8 @@ show_usage() {
     echo "Running the server:"
     echo "  ./start.sh --demo                    # Dev server (background)"
     echo "  ./restart.sh                         # Dev server (port 5001)"
-    echo "  systemctl --user start hammarby-website  # Production (systemd)"
+    echo "  systemctl --user start hammarby-website-dev   # Dev service (systemd, port 5050)"
+    echo "  systemctl --user start hammarby-website-prod  # Prod service (systemd, port 5051, master branch)"
     echo ""
     echo "Stopping the server:"
     echo "  ./stop.sh"
@@ -597,8 +605,8 @@ main() {
     echo "Next steps:"
     echo "  1. Review and customize .env file"
     echo "  2. Start dev server: ./start.sh --demo"
-    echo "  3. Or start systemd: systemctl --user start hammarby-website"
-    echo "  4. Access: http://localhost:5050"
+    echo "  3. Or start systemd: systemctl --user start $(get_service_name "$SCRIPT_DIR" | sed 's/\.service$//')"
+    echo "  4. Access: http://localhost:$(get_service_port "$SCRIPT_DIR")"
     echo ""
 
     # Start server in demo mode

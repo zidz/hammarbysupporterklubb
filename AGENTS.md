@@ -18,9 +18,10 @@ sudo ./start.sh --init     # System packages (requires root)
 ./restart.sh               # Background, port 5001
 ./restart.sh --foreground  # Foreground, port 5001
 
-# Production (systemd user service):
-./start.sh --systemd                  # Install service
-systemctl --user start hammarby-website  # Start
+# Systemd user service (branch decides the service):
+./start.sh --systemd                  # Install service for current branch
+systemctl --user start hammarby-website-dev   # dev branch, port 5050
+systemctl --user start hammarby-website-prod  # master branch, port 5051
 ```
 
 ## Architecture
@@ -42,7 +43,7 @@ systemctl --user start hammarby-website  # Start
 | Run failed tests only | `./venv/bin/python -m pytest --lf` |
 | Coverage report | `./venv/bin/python -m pytest --cov=backend --cov-report=html` |
 | Start dev server | `./start.sh --demo` (port 5050) or `./restart.sh` (port 5001) |
-| Production (systemd) | `./start.sh --systemd` then `systemctl --user start hammarby-website` |
+| Systemd service (dev/prod) | `./start.sh --systemd` then `systemctl --user start hammarby-website-dev` (dev) or `hammarby-website-prod` (master) |
 | Stop server | `./stop.sh` |
 
 ## Testing Notes
@@ -96,16 +97,24 @@ CLI tool: `./venv/bin/python user_manager.py`
 
 ## Environment Variables
 
-Set in `.env` (created by `./start.sh`):
-- `SECRET_KEY` - **Must change in production**
-- `FLASK_ENV` - `development` or `production`
-- `FLASK_DEBUG` - `1` or `0`
-- `PORT` - Default `5050`
+Set in `.env` (created by `./start.sh`, branch-aware):
+- `SECRET_KEY` - Randomly generated
+- `FLASK_ENV` - `production` (master branch) or `development` (other)
+- `FLASK_DEBUG` - `0` (master) or `1` (other)
+- `PORT` - `5051` (master) or `5050` (other)
+
+## Dev + Prod on the same server
+
+- Run as **two separate clones**: dev clone (branch `dev`) + prod clone (branch `master`), each with its own data (`backend/data/`, `uploads/`, `.env`, venv)
+- Service names are branch-based: `hammarby-website-dev.service` (port 5050) and `hammarby-website-prod.service` (port 5051); feature branches map to the dev service
+- `./stop.sh` and `./restart.sh --systemd *` only affect the clone they run from
+- Do NOT run `--demo`/`restart.sh` and the systemd service of the same mode at the same time (port conflict)
 
 ## HAProxy/Proxy
 
 - `ProxyFix` already configured in `app.py` for production behind reverse proxy
 - Handles `X-Forwarded-For`, `X-Forwarded-Proto`, `X-Forwarded-Host`, `X-Forwarded-Prefix`
+- SSL terminates at HAProxy in front of the site (session cookies are Secure, so prod needs HTTPS from the browser)
 
 ## Common Gotchas
 

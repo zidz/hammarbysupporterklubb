@@ -29,17 +29,25 @@ log_warning() {
 # Script directory
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
-log_info "Stopping Flask server..."
+# Service based on git branch (master = prod, anything else = dev)
+BRANCH=$(git -C "$SCRIPT_DIR" rev-parse --abbrev-ref HEAD 2>/dev/null || echo "")
+if [ "$BRANCH" = "master" ]; then
+    SERVICE_NAME="hammarby-website-prod.service"
+else
+    SERVICE_NAME="hammarby-website-dev.service"
+fi
+
+log_info "Stopping Flask server (mode: ${BRANCH:-dev})..."
 
 # Try stopping systemd user service
-if systemctl --user is-active hammarby-website.service &> /dev/null; then
-    log_info "Stopping systemd user service..."
-    systemctl --user stop hammarby-website.service
+if systemctl --user is-active "$SERVICE_NAME" &> /dev/null; then
+    log_info "Stopping systemd user service: $SERVICE_NAME"
+    systemctl --user stop "$SERVICE_NAME"
     log_success "Systemd service stopped"
 fi
 
-# Find and kill Flask processes
-PIDS=$(pgrep -f "python.*backend/app.py" 2>/dev/null || true)
+# Find and kill Flask processes started from this directory (not other clones)
+PIDS=$(pgrep -f "python.*${SCRIPT_DIR}/backend/app.py" 2>/dev/null || true)
 
 if [ -n "$PIDS" ]; then
     log_info "Found Flask processes: $PIDS"
@@ -47,7 +55,7 @@ if [ -n "$PIDS" ]; then
     sleep 2
 
     # Force kill if still running
-    PIDS=$(pgrep -f "python.*backend/app.py" 2>/dev/null || true)
+    PIDS=$(pgrep -f "python.*${SCRIPT_DIR}/backend/app.py" 2>/dev/null || true)
     if [ -n "$PIDS" ]; then
         log_warning "Force killing remaining processes..."
         kill -9 $PIDS 2>/dev/null || true
@@ -56,18 +64,6 @@ if [ -n "$PIDS" ]; then
     log_success "Flask server stopped"
 else
     log_info "No Flask server processes found"
-fi
-
-# Kill any process on port 5000
-log_info "Checking for processes on port 5000..."
-PORT_PROCESS=$(lsof -ti:5000 2>/dev/null || true)
-
-if [ -n "$PORT_PROCESS" ]; then
-    log_warning "Killing process on port 5000: $PORT_PROCESS"
-    kill -9 $PORT_PROCESS 2>/dev/null || true
-    log_success "Port 5000 freed"
-else
-    log_info "No processes found on port 5000"
 fi
 
 log_success "All servers stopped"

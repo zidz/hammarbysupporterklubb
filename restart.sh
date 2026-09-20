@@ -30,8 +30,17 @@ NC='\033[0m' # No Color
 
 # Configuration
 PORT="${PORT:-5001}"
-LOG_FILE="/tmp/hammarby-flask.log"
-PID_FILE="/tmp/hammarby-flask.pid"
+
+# Service mode based on git branch (master = prod, anything else = dev)
+BRANCH=$(git -C "$SCRIPT_DIR" rev-parse --abbrev-ref HEAD 2>/dev/null || echo "")
+if [ "$BRANCH" = "master" ]; then
+    SERVICE_MODE="prod"
+else
+    SERVICE_MODE="dev"
+fi
+SERVICE_NAME="hammarby-website-${SERVICE_MODE}.service"
+LOG_FILE="/tmp/hammarby-flask-${SERVICE_MODE}.log"
+PID_FILE="${SCRIPT_DIR}/.server.pid"
 PYTHONPATH="$SCRIPT_DIR"
 
 # Logging functions
@@ -103,8 +112,8 @@ stop_server() {
         kill -9 $port_process 2>/dev/null || true
     fi
 
-    # Kill any Flask process
-    pkill -f "python.*backend/app.py" 2>/dev/null || true
+    # Kill Flask processes started from this directory (not other clones)
+    pkill -f "python.*${SCRIPT_DIR}/backend/app.py" 2>/dev/null || true
 
     log_success "Server stopped"
 }
@@ -172,9 +181,9 @@ show_status() {
 
 systemd_status() {
     log_info "Checking systemd user service status..."
-    if systemctl --user is-active hammarby-website.service &> /dev/null; then
+    if systemctl --user is-active "$SERVICE_NAME" &> /dev/null; then
         log_success "Systemd service is active"
-        systemctl --user status hammarby-website.service --no-pager
+        systemctl --user status "$SERVICE_NAME" --no-pager
     else
         log_warning "Systemd service is not running"
         echo "Start with: $0 --systemd start"
@@ -183,21 +192,21 @@ systemd_status() {
 
 systemd_start() {
     log_info "Starting systemd user service..."
-    systemctl --user start hammarby-website.service
+    systemctl --user start "$SERVICE_NAME"
     log_success "Service started"
-    echo "Status: systemctl --user status hammarby-website"
-    echo "Logs:   journalctl --user -u hammarby-website -f"
+    echo "Status: systemctl --user status hammarby-website-${SERVICE_MODE}"
+    echo "Logs:   journalctl --user -u hammarby-website-${SERVICE_MODE} -f"
 }
 
 systemd_stop() {
     log_info "Stopping systemd user service..."
-    systemctl --user stop hammarby-website.service
+    systemctl --user stop "$SERVICE_NAME"
     log_success "Service stopped"
 }
 
 systemd_restart() {
     log_info "Restarting systemd user service..."
-    systemctl --user restart hammarby-website.service
+    systemctl --user restart "$SERVICE_NAME"
     log_success "Service restarted"
 }
 
