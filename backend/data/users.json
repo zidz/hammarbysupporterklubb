@@ -10,7 +10,7 @@
     "id": 2,
     "username": "admin",
     "email": "admin@hammarby.se",
-    "password_hash": "$2b$12$gm7Gjzp2mqFh59e46DluIuEUsu0UjcGc2qV4F7tWut3K.g95zlch.",
+    "password_hash": "$2b$12$xj1gsnlwP.T//bygc1098eh.Ocl3agq.RmMgETU5ogp/MVAvmzbqW",
     "role": "admin"
   }
 ]
