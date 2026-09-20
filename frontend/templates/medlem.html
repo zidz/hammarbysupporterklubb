@@ -13,28 +13,28 @@
                 <h3>Juniormedlemskap</h3>
                 <p class="price">100 kr</p>
                 <p class="renewal-note">Förnyas efter ett år.</p>
-                <button type="button" class="btn btn-primary membership-btn" data-membership="Juniormedlemskap" data-price="100 kr" data-qr="{{ url_for('static', filename='images/swish-QR-small-100.png') }}">Bli Medlem</button>
+                <button type="button" class="btn btn-primary membership-btn" data-membership="Juniormedlemskap" data-price="100 kr" data-amount="100" data-qr="{{ url_for('static', filename='images/swish-QR-small-100.png') }}">Bli Medlem</button>
             </div>
 
             <div class="pricing-card">
                 <h3>Ordinarie medlemskap</h3>
                 <p class="price">250 kr</p>
                 <p class="renewal-note">Förnyas efter ett år.</p>
-                <button type="button" class="btn btn-primary membership-btn" data-membership="Ordinarie medlemskap" data-price="250 kr" data-qr="{{ url_for('static', filename='images/swish-QR-small-250.png') }}">Bli Medlem</button>
+                <button type="button" class="btn btn-primary membership-btn" data-membership="Ordinarie medlemskap" data-price="250 kr" data-amount="250" data-qr="{{ url_for('static', filename='images/swish-QR-small-250.png') }}">Bli Medlem</button>
             </div>
 
             <div class="pricing-card">
                 <h3>Seniormedlemskap</h3>
                 <p class="price">150 kr</p>
                 <p class="renewal-note">Förnyas efter ett år.</p>
-                <button type="button" class="btn btn-primary membership-btn" data-membership="Seniormedlemskap" data-price="150 kr" data-qr="{{ url_for('static', filename='images/swish-QR-small-150.png') }}">Bli Medlem</button>
+                <button type="button" class="btn btn-primary membership-btn" data-membership="Seniormedlemskap" data-price="150 kr" data-amount="150" data-qr="{{ url_for('static', filename='images/swish-QR-small-150.png') }}">Bli Medlem</button>
             </div>
 
             <div class="pricing-card">
                 <h3>Studerande</h3>
                 <p class="price">150 kr</p>
                 <p class="renewal-note">Förnyas efter ett år.</p>
-                <button type="button" class="btn btn-primary membership-btn" data-membership="Studerande" data-price="150 kr" data-qr="{{ url_for('static', filename='images/swish-QR-small-150.png') }}">Bli Medlem</button>
+                <button type="button" class="btn btn-primary membership-btn" data-membership="Studerande" data-price="150 kr" data-amount="150" data-qr="{{ url_for('static', filename='images/swish-QR-small-150.png') }}">Bli Medlem</button>
             </div>
         </div>
     </div>
@@ -50,7 +50,7 @@
         <img id="qr-modal-image" src="" alt="Swish QR-kod" class="qr-code">
         <div id="qr-swish-section" hidden>
             <button type="button" class="btn qr-swish-btn" id="qr-swish-btn">Öppna Swish</button>
-            <p class="qr-swish-note">Obs! Om du använder knappen ovan måste du själv fylla i beloppet och din e-postadress i meddelandefältet i Swish.</p>
+            <p class="qr-swish-note">Obs! Beloppet är ifyllt. Glöm inte att ange din e-postadress i meddelandefältet i Swish.</p>
         </div>
     </div>
 </div>
@@ -66,16 +66,27 @@
         const swishSection = document.getElementById('qr-swish-section');
         const swishButton = document.getElementById('qr-swish-btn');
 
-        const SWISH_URL = 'swish://swish?mobileaccount=1230339267';
+        const SWISH_NUMBER = '1230339267';
+        let swishUrl = '';
         const isMobile = /Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent) ||
             (navigator.userAgentData && navigator.userAgentData.mobile);
+
+        function buildSwishUrl(amount) {
+            const data = {
+                version: 1,
+                payee: { value: SWISH_NUMBER },
+                amount: { value: amount },
+                message: { value: '' }
+            };
+            return 'swish://payment?data=' + encodeURIComponent(JSON.stringify(data));
+        }
 
         if (isMobile) {
             swishSection.hidden = false;
         }
 
         swishButton.addEventListener('click', function() {
-            window.location.href = SWISH_URL;
+            window.location.href = swishUrl;
         });
 
         function openModal(button) {
@@ -83,6 +94,7 @@
             price.textContent = button.dataset.price;
             image.src = button.dataset.qr;
             image.alt = 'Swish QR-kod ' + button.dataset.membership;
+            swishUrl = buildSwishUrl(Number(button.dataset.amount));
             modal.classList.add('open');
             document.body.style.overflow = 'hidden';
         }

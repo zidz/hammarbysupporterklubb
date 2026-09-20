@@ -141,16 +141,20 @@ class TestMembershipPage:
         assert 'Studerande' in response_text
     
     def test_membership_page_has_swish_deep_link_button(self, client):
-        """Test membership modal has 'Öppna Swish' deep link button for mobile devices."""
+        """Test membership modal has 'Öppna Swish' payment deep link with pre-filled amount."""
         response = client.get('/medlem', follow_redirects=True)
         
         assert response.status_code == 200
         response_text = response.data.decode('utf-8', errors='ignore')
         assert 'id="qr-swish-btn"' in response_text
         assert 'Öppna Swish' in response_text
-        assert 'swish://swish?mobileaccount=1230339267' in response_text
+        assert 'swish://payment?data=' in response_text
+        assert '1230339267' in response_text
         assert 'qr-swish-section' in response_text
-        assert 'beloppet' in response_text
+        assert 'data-amount="100"' in response_text
+        assert 'data-amount="250"' in response_text
+        assert 'data-amount="150"' in response_text
+        assert 'e-postadress' in response_text
     
     def test_membership_page_removed_old_cards_and_payment_section(self, client):
         """Test old cards, payment section and removed content are gone."""
