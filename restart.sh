@@ -123,10 +123,10 @@ start_server() {
 
     if [ "$foreground" = "true" ]; then
         # Run in foreground
-        env PYTHONPATH="$PYTHONPATH" PORT="$PORT" "$SCRIPT_DIR/venv/bin/python" "$SCRIPT_DIR/backend/app.py"
+        env PYTHONPATH="$PYTHONPATH" PORT="$PORT" FLASK_DEBUG=1 "$SCRIPT_DIR/venv/bin/python" "$SCRIPT_DIR/backend/app.py"
     else
         # Run in background
-        nohup env PYTHONPATH="$PYTHONPATH" PORT="$PORT" "$SCRIPT_DIR/venv/bin/python" "$SCRIPT_DIR/backend/app.py" > "$LOG_FILE" 2>&1 &
+        nohup env PYTHONPATH="$PYTHONPATH" PORT="$PORT" FLASK_DEBUG=1 "$SCRIPT_DIR/venv/bin/python" "$SCRIPT_DIR/backend/app.py" > "$LOG_FILE" 2>&1 &
         local server_pid=$!
         echo $server_pid > "$PID_FILE"
 
