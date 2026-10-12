@@ -5,6 +5,24 @@ import tempfile
 import json
 from io import BytesIO
 from PIL import Image
+import bcrypt
+
+
+# Single source of truth for the login test user. Tests never touch the real
+# backend/data/users.json (see the app fixture), so this user exists only in
+# a temporary file per test.
+TEST_USER = {
+    'username': 'testuser',
+    'email': 'test@hammarby.se',
+    'password': 'TestPassword123!',
+    'role': 'admin'
+}
+
+# Low bcrypt cost to keep the suite fast; verification uses the cost stored
+# in the hash itself, so logins work as in production.
+TEST_USER_PASSWORD_HASH = bcrypt.hashpw(
+    TEST_USER['password'].encode('utf-8'), bcrypt.gensalt(rounds=4)
+).decode('utf-8')
 
 
 @pytest.fixture(scope='function')
@@ -12,11 +30,25 @@ def app(tmp_path, monkeypatch):
     """Create and configure a test application instance."""
     from backend.app import create_app
     from backend import routes
+    from backend.models import User
 
     # Keep tests away from the real news data directory
     test_news_dir = tmp_path / 'news'
     test_news_dir.mkdir()
     monkeypatch.setattr(routes, 'NEWS_DIR', str(test_news_dir))
+
+    # Keep tests away from the real user storage: seed a temporary users
+    # file with the test user only
+    test_users_file = tmp_path / 'users.json'
+    test_users_file.write_text(json.dumps([{
+        'id': 1,
+        'username': TEST_USER['username'],
+        'email': TEST_USER['email'],
+        'password_hash': TEST_USER_PASSWORD_HASH,
+        'role': TEST_USER['role'],
+    }], indent=2))
+    monkeypatch.setattr(User, 'get_users_file',
+                        staticmethod(lambda: str(test_users_file)))
 
     # Create test app with test configuration
     app = create_app()
@@ -47,13 +79,8 @@ def runner(app):
 
 @pytest.fixture(scope='function')
 def test_user():
-    """Create test user data."""
-    return {
-        'username': 'testuser',
-        'email': 'test@hammarby.se',
-        'password': 'TestPassword123!',
-        'role': 'admin'
-    }
+    """Create test user data (matches the user seeded by the app fixture)."""
+    return dict(TEST_USER)
 
 
 @pytest.fixture(scope='function')

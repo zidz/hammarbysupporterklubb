@@ -49,7 +49,7 @@ systemctl --user start hammarby-website-prod  # master branch, port 5051
 ## Testing Notes
 
 - Tests use fixtures in `tests/conftest.py` - available: `app`, `client`, `test_user`, `test_news_data`, `test_image`
-- `test_user` fixture creates admin user: username=`testuser`, password=`TestPassword123!`
+- Tests are fully isolated from real data: the `app` fixture seeds a temporary `users.json` (via `User.get_users_file` monkeypatch) with the `testuser` admin from the `test_user` fixture - the real `backend/data/users.json` is never read or written by tests, so real users can be added/removed freely without affecting the suite
 - Image upload test limit is **10KB** (code says 100MB but tests expect 10KB)
 - Session timeout is 30 minutes (configurable via `PERMANENT_SESSION_LIFETIME`)
 - Max file upload is 16MB (per `MAX_CONTENT_LENGTH` in app.py)
@@ -63,6 +63,10 @@ systemctl --user start hammarby-website-prod  # master branch, port 5051
 - User data stored in `backend/data/users.json`
 
 ## User Management
+
+- Dev and prod run the **same users and passwords** (`backend/data/users.json` is tracked in git): make user/password changes in the dev clone, commit, push to both `dev` and `master`, then `git pull` + restart in the prod clone
+- The real `admin` password lives only in the operator's password manager - never commit or echo it (only the bcrypt hash is stored in the file)
+- No seeded test users in the data file - test users exist only in the test fixtures (see Testing Notes)
 
 CLI tool: `./venv/bin/python user_manager.py`
 
